@@ -32,25 +32,24 @@
     .page-title span { color: #6366f1; }
     .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .badge-total { background: #6366f1; color: #fff; font-size: .75rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
-    .page-meta { font-size: .8rem; color: var(--muted); }
+    .page-meta { font-size: .68rem; color: #9ca3af; }
 
     /* ── Connection status pill ── */
     .conn-status {
-      display: flex; align-items: center; gap: 7px;
-      padding: 5px 14px; border-radius: 999px;
-      font-family: var(--font); font-size: .75rem; font-weight: 600;
-      border: 1.5px solid; cursor: pointer; transition: all .2s; white-space: nowrap;
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1.5px solid; cursor: pointer; transition: all .2s; flex-shrink: 0;
     }
     .conn-status.disconnected {
-      border-color: #fca5a5; background: #fef2f2; color: #dc2626;
+      border-color: #fca5a5; background: #fef2f2;
     }
     .conn-status.disconnected:hover { background: #fee2e2; border-color: #f87171; }
     .conn-status.connected {
-      border-color: #86efac; background: #f0fdf4; color: #16a34a;
+      border-color: #86efac; background: #f0fdf4;
       cursor: default;
     }
     .conn-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
     }
     .disconnected .conn-dot { background: #ef4444; animation: pulse-red 1.5s infinite; }
     .connected    .conn-dot { background: #22c55e; }
@@ -59,7 +58,7 @@
       50%       { opacity: .35; }
     }
 
-    .btn-reload { font-family: var(--font); font-size: .75rem; font-weight: 600; padding: 5px 14px; border-radius: 999px; border: 1.5px solid #d1d5db; background: #fff; color: var(--muted); cursor: pointer; transition: all .15s; }
+    .btn-reload { font-family: var(--font); font-size: .9rem; font-weight: 600; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #d1d5db; background: #fff; color: var(--muted); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .btn-reload:hover { border-color: #6366f1; color: #6366f1; }
     .save-indicator { font-size: .72rem; color: #22c55e; font-weight: 500; opacity: 0; transition: opacity .3s; }
     .save-indicator.visible { opacity: 1; }
@@ -173,9 +172,32 @@
     .done-btn svg { display: none; }
     .done-btn:hover svg { display: block; }
 
-    /* Delete button */
-    .delete-btn { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; padding: 0; color: #d1d5db; font-size: 14px; line-height: 1; }
-    .delete-btn:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+    /* Delete tag (inline, bottom of card) */
+    .todo-card { flex-direction: column !important; }
+    .card-top { display: flex; align-items: flex-start; gap: 10px; width: 100%; }
+    .card-footer { display: flex; align-items: center; gap: 8px; padding-top: 6px; }
+    .delete-tag {
+      font-size: .65rem; font-weight: 600; color: #d1d5db;
+      cursor: pointer; transition: color .15s; user-select: none;
+      letter-spacing: .02em;
+    }
+    .delete-tag:hover { color: #ef4444; }
+    .delete-confirm {
+      display: flex; align-items: center; gap: 6px;
+      font-size: .65rem; font-weight: 500; color: #7f1d1d;
+      background: #fef2f2; border: 1px solid #fecaca;
+      border-radius: 6px; padding: 3px 8px;
+    }
+    .delete-confirm.hidden { display: none; }
+    .delete-confirm button {
+      font-family: var(--font); font-size: .65rem; font-weight: 700;
+      border: none; border-radius: 4px; cursor: pointer; padding: 2px 7px;
+    }
+    .delete-confirm .btn-yes { background: #ef4444; color: #fff; }
+    .delete-confirm .btn-yes:hover { background: #dc2626; }
+    .delete-confirm .btn-no  { background: #e5e7eb; color: #374151; }
+    .delete-confirm .btn-no:hover  { background: #d1d5db; }
+    body.locked .delete-tag { opacity: .3; cursor: not-allowed; pointer-events: none; }
 
     /* ── Due Today ── */
     .due-today { max-width: 1100px; margin: 16px auto 28px; padding: 0 16px; }
@@ -233,20 +255,6 @@
     .cmd-send { font-family: var(--font); font-size: .82rem; font-weight: 600; padding: 10px 20px; border-radius: 999px; border: none; background: #6366f1; color: #fff; cursor: pointer; transition: background .15s; white-space: nowrap; }
     .cmd-send:hover { background: #4f46e5; }
     .cmd-send:active { background: #4338ca; }
-    .cmd-mic {
-      width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #d1d5db;
-      background: #f9fafb; color: #6b7280; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; flex-shrink: 0;
-      transition: background .15s, border-color .15s, color .15s;
-    }
-    .cmd-mic:hover { border-color: #6366f1; color: #6366f1; background: #eef2ff; }
-    .cmd-mic.listening {
-      background: #ef4444; border-color: #ef4444; color: #fff;
-      animation: micPulse .9s ease-in-out infinite;
-    }
-    @keyframes micPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,.4); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
-    .cmd-mic.unsupported { display: none; }
     .cmd-feedback { font-size: .72rem; font-weight: 500; padding: 0 4px; min-height: 16px; }
     .cmd-feedback.error { color: #ef4444; }
     .cmd-feedback.success { color: #22c55e; }
@@ -262,12 +270,11 @@
     <div class="header-actions">
       <span class="save-indicator" id="saveIndicator">✓ Saved</span>
       <span class="badge-total" id="totalBadge">0 active</span>
-      <span class="page-meta">Generated 06 Mar 2026, 10:51 UTC</span>
-      <button class="conn-status disconnected" id="connStatus" onclick="connectFile()">
+      <span class="page-meta" id="pageMeta">06 Mar 2026</span>
+      <button class="conn-status disconnected" id="connStatus" onclick="connectFile()" title="No write access — click to set token">
         <span class="conn-dot"></span>
-        <span id="connLabel">No write access — click to set token</span>
       </button>
-      <button class="btn-reload" onclick="location.reload()">↺ Reload</button>
+      <button class="btn-reload" onclick="location.reload()" title="Reload">↺</button>
     </div>
   </header>
 
@@ -366,7 +373,6 @@
                placeholder="IU Finish roadmap deck   ·   important urgent Finish roadmap deck   ·   remove velocity"
                onfocus="showHint()" onblur="hideHint()"
                onkeydown="if(event.key==='Enter') runCommand()" />
-        <button class="cmd-mic" id="cmdMic" onclick="toggleVoice()" title="Click to dictate a task">🎤</button>
         <button class="cmd-send" id="cmdSend" onclick="runCommand()">Send</button>
       </div>
       <div class="cmd-feedback" id="cmdFeedback"></div>
@@ -475,13 +481,12 @@
     // ── Connection UI ────────────────────────────────────────────────────────
     function updateConnectionUI() {
       const status = document.getElementById("connStatus");
-      const label  = document.getElementById("connLabel");
       const banner = document.getElementById("connectBanner");
       const input  = document.getElementById("cmdInput");
 
       if (isConnected) {
         status.className = "conn-status connected";
-        label.textContent = "Connected to GitHub";
+        status.title = "Connected to GitHub";
         banner.classList.add("hidden");
         document.body.classList.remove("locked");
         input.placeholder = "IU Finish roadmap deck   ·   remove velocity";
@@ -489,7 +494,7 @@
         document.getElementById("cmdSend").disabled = false;
       } else {
         status.className = "conn-status disconnected";
-        label.textContent = "No write access — click to set token";
+        status.title = "No write access — click to set token";
         banner.classList.remove("hidden");
         document.body.classList.add("locked");
         input.placeholder = "Connect to todos.json to edit your list";
@@ -603,24 +608,33 @@
                data-id="${item.id}"
                ondragstart="onDragStart(event, '${item.id}')"
                ondragend="onDragEnd(event)">
-            <div class="card-actions">
-              <button class="done-btn" onclick="markDone('${item.id}')" title="Mark as done">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              <button class="delete-btn" onclick="deleteItem('${item.id}')" title="Delete permanently">×</button>
-            </div>
-            <div class="card-body">
-              <div class="card-main">
-                <p class="todo-text" ondblclick="editTitle('${item.id}')" title="Double-click to edit">${item.text}</p>
-                ${renderDepChips(item.dependency)}
-                ${renderMentionChips(item.mentions, item.id)}
-                <div class="todo-meta">
-                  <span class="meta-date">Added ${fmtDate(item.createdAt)}</span>
-                </div>
+            <div class="card-top">
+              <div class="card-actions">
+                <button class="done-btn" onclick="markDone('${item.id}')" title="Mark as done">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
               </div>
-              <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
+              <div class="card-body">
+                <div class="card-main">
+                  <p class="todo-text" ondblclick="editTitle('${item.id}')" title="Double-click to edit">${item.text}</p>
+                  ${renderDepChips(item.dependency)}
+                  ${renderMentionChips(item.mentions, item.id)}
+                  <div class="todo-meta">
+                    <span class="meta-date">Added ${fmtDate(item.createdAt)}</span>
+                  </div>
+                </div>
+                <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="delete-tag" onclick="showDeleteConfirm('${item.id}')">Delete</span>
+              <div class="delete-confirm hidden" id="del-confirm-${item.id}">
+                Delete permanently?
+                <button class="btn-yes" onclick="confirmDelete('${item.id}')">Yes</button>
+                <button class="btn-no"  onclick="cancelDelete('${item.id}')">Cancel</button>
+              </div>
             </div>
           </div>`;
         }).join("");
@@ -718,9 +732,14 @@
       persistState();
     }
 
-    function deleteItem(id) {
+    function showDeleteConfirm(id) {
+      document.getElementById('del-confirm-' + id).classList.remove('hidden');
+    }
+    function cancelDelete(id) {
+      document.getElementById('del-confirm-' + id).classList.add('hidden');
+    }
+    function confirmDelete(id) {
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
-      if (!confirm("Delete this task permanently? This cannot be undone.")) return;
       todos = todos.filter(t => t.id !== id);
       render();
       persistState();
@@ -1161,65 +1180,6 @@
       setFeedback('Added to "' + qLabel + '": ' + taskText, "success");
     }
 
-
-    // ── Init ────────────────────────────────────────────────────────────────
-    // ── Voice input ──────────────────────────────────────────────────────────
-    let _recognition = null;
-
-    (function initMic() {
-      const btn = document.getElementById('cmdMic');
-      if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-        btn.classList.add('unsupported');
-      }
-    })();
-
-    function toggleVoice() {
-      const btn = document.getElementById('cmdMic');
-      if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-        setFeedback("Voice input is not supported in this browser. Try Chrome or Safari.", "error");
-        return;
-      }
-      // Already listening → stop
-      if (_recognition) {
-        _recognition.stop();
-        return;
-      }
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      _recognition = new SR();
-      // No lang lock — browser uses OS/system language automatically
-      _recognition.continuous = true;        // keep listening through natural pauses
-      _recognition.interimResults = true;    // show live transcription while speaking
-      _recognition.maxAlternatives = 3;      // let engine rank more hypotheses internally
-
-      _recognition.onstart = () => {
-        btn.classList.add('listening');
-        btn.title = 'Click to stop recording';
-        setFeedback('Listening…', 'info');
-      };
-
-      _recognition.onresult = e => {
-        let interim = '', finalText = '';
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-          if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
-          else interim += e.results[i][0].transcript;
-        }
-        const input = document.getElementById('cmdInput');
-        input.value = finalText || interim;
-        if (finalText) setFeedback('Heard: "' + finalText.trim() + '" — press Send or Enter to confirm', 'success');
-      };
-
-      _recognition.onerror = e => {
-        setFeedback('Voice error: ' + e.error, 'error');
-      };
-
-      _recognition.onend = () => {
-        btn.classList.remove('listening');
-        btn.title = 'Click to dictate a task';
-        _recognition = null;
-      };
-
-      _recognition.start();
-    }
 
     // ── Init ────────────────────────────────────────────────────────────────
     migrateDeadlines(); // populate deadline field from text for legacy items
