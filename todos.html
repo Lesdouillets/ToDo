@@ -422,7 +422,14 @@
     }
 
     async function tryAutoConnect() {
-      // 1. Always fetch the latest todos.json from GitHub (public raw, no auth)
+      // 1. If a token is already stored, mark as connected immediately (no API call needed)
+      const token = localStorage.getItem(LS_TOKEN_KEY);
+      if (token) {
+        isConnected = true;
+        updateConnectionUI();
+      }
+
+      // 2. Always fetch the latest todos.json from GitHub (public raw, no auth)
       try {
         const rawUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
         const r = await fetch(rawUrl);
@@ -434,20 +441,6 @@
           render();
         }
       } catch (_) { /* offline — keep localStorage data */ }
-
-      // 2. If a token is stored, verify it and mark as connected (enables writes)
-      const token = localStorage.getItem(LS_TOKEN_KEY);
-      if (!token) return;
-      try {
-        const apiUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`;
-        const r = await fetch(apiUrl, { headers: ghHeaders() });
-        if (r.ok) {
-          const meta = await r.json();
-          localStorage.setItem(LS_SHA_KEY, meta.sha);
-          isConnected = true;
-          updateConnectionUI();
-        }
-      } catch (_) { /* token check failed — stay disconnected */ }
     }
 
     async function connectFile() {
@@ -540,8 +533,23 @@
 
     async function saveToFile() {
       const token = localStorage.getItem(LS_TOKEN_KEY);
-      const sha   = localStorage.getItem(LS_SHA_KEY);
-      if (!token || !sha) return;
+      if (!token) return;
+
+      // Fetch SHA on the fly if not cached (e.g. first save after auto-connect)
+      let sha = localStorage.getItem(LS_SHA_KEY);
+      if (!sha) {
+        try {
+          const metaR = await fetch(
+            `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`,
+            { headers: ghHeaders() }
+          );
+          if (!metaR.ok) { console.warn('Could not fetch SHA:', metaR.status); return; }
+          const meta = await metaR.json();
+          sha = meta.sha;
+          localStorage.setItem(LS_SHA_KEY, sha);
+        } catch (e) { console.warn('SHA fetch failed:', e); return; }
+      }
+
       try {
         const body = JSON.stringify({ todos }, null, 2);
         const content = btoa(unescape(encodeURIComponent(body)));
@@ -555,7 +563,9 @@
           localStorage.setItem(LS_SHA_KEY, data.content.sha);
           flashSaved();
         } else {
-          console.warn('GitHub save failed:', r.status, await r.text());
+          // SHA might be stale — clear it so next save refetches
+          localStorage.removeItem(LS_SHA_KEY);
+          console.warn('GitHub save failed:', r.status);
         }
       } catch (e) {
         console.warn('Save failed:', e);
