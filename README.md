@@ -1,4 +1,4 @@
-# Justin's Marvelous Todolist
+# Maxime's Marvelous Todolist
 
 A personal Eisenhower-matrix task manager that lives inside [Cursor](https://cursor.sh). You talk to it in the Cursor chat, it organises your tasks into a beautiful interactive HTML dashboard you open in your browser — no server, no accounts, no dependencies.
 
