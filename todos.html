@@ -265,7 +265,7 @@
       <span class="page-meta">Generated 06 Mar 2026, 10:51 UTC</span>
       <button class="conn-status disconnected" id="connStatus" onclick="connectFile()">
         <span class="conn-dot"></span>
-        <span id="connLabel">Not connected — click to connect</span>
+        <span id="connLabel">No write access — click to set token</span>
       </button>
       <button class="btn-reload" onclick="location.reload()">↺ Reload</button>
     </div>
@@ -273,10 +273,10 @@
 
   <div class="connect-banner" id="connectBanner">
     <div class="connect-banner-text">
-      Editing is locked. Connect to todos.json to make changes.<br>
-      <span>Your list is read-only until you connect. Changes will be written directly to todos.json.</span>
+      Editing is locked. Add a GitHub token to save changes.<br>
+      <span>Your list loads automatically. Changes are saved back to GitHub — one-time token setup required.</span>
     </div>
-    <button class="btn-connect-now" onclick="connectFile()">⚡ Connect now</button>
+    <button class="btn-connect-now" onclick="connectFile()">⚡ Set GitHub token</button>
   </div>
 
   <section class="due-today" id="dueTodaySection" style="display:none;">
@@ -374,6 +374,14 @@
   </div>
 
   <script>
+    // ── GitHub API config ────────────────────────────────────────────────────
+    const GH_OWNER  = 'Lesdouillets';
+    const GH_REPO   = 'ToDo';
+    const GH_BRANCH = 'main';
+    const GH_FILE   = 'todos.json';
+    const LS_TOKEN_KEY = 'jm_gh_token';
+    const LS_SHA_KEY   = 'jm_todos_sha';
+
     // ── Data ────────────────────────────────────────────────────────────────
     const GENERATED_AT = "2026-03-06T10:51:53.512814+00:00";       // timestamp of last Cursor-agent regeneration
     const LS_KEY     = "jm_todos";
@@ -403,68 +411,64 @@
       localStorage.setItem(LS_GEN_KEY, GENERATED_AT);
     })();
 
-    let fileHandle = null;
     let isConnected = false;
     let dragId = null;
 
-    // ── IndexedDB handle persistence ─────────────────────────────────────────
-    const IDB_NAME = 'jm-todos', IDB_STORE = 'handles', IDB_KEY = 'todosJson';
-
-    function openIDB() {
-      return new Promise((res, rej) => {
-        const req = indexedDB.open(IDB_NAME, 1);
-        req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
-        req.onsuccess = e => res(e.target.result);
-        req.onerror   = e => rej(e.target.error);
-      });
+    // ── GitHub API helpers ────────────────────────────────────────────────────
+    function ghHeaders() {
+      const token = localStorage.getItem(LS_TOKEN_KEY);
+      return token ? { Authorization: 'token ' + token, 'Content-Type': 'application/json' }
+                   : { 'Content-Type': 'application/json' };
     }
 
-    async function saveHandle(h) {
-      const db = await openIDB();
-      const tx = db.transaction(IDB_STORE, 'readwrite');
-      tx.objectStore(IDB_STORE).put(h, IDB_KEY);
-    }
-
-    async function loadHandle() {
-      const db = await openIDB();
-      return new Promise((res, rej) => {
-        const req = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(IDB_KEY);
-        req.onsuccess = e => res(e.target.result || null);
-        req.onerror   = e => rej(e.target.error);
-      });
-    }
-
-    // Try to auto-reconnect using a stored handle.
-    // - If permission is already granted  → connect silently.
-    // - If permission needs a user gesture → show a one-click "Reconnect" button.
     async function tryAutoConnect() {
-      if (!window.showOpenFilePicker) return;
+      // 1. Always fetch the latest todos.json from GitHub (public raw, no auth)
       try {
-        const h = await loadHandle();
-        if (!h) return;
-        const perm = await h.queryPermission({ mode: 'readwrite' });
-        if (perm === 'granted') {
-          fileHandle = h;
+        const rawUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
+        const r = await fetch(rawUrl);
+        if (r.ok) {
+          const data = await r.json();
+          todos = data.todos || [];
+          localStorage.setItem(LS_KEY, JSON.stringify(todos));
+          localStorage.setItem(LS_GEN_KEY, new Date().toISOString());
+          render();
+        }
+      } catch (_) { /* offline — keep localStorage data */ }
+
+      // 2. If a token is stored, verify it and mark as connected (enables writes)
+      const token = localStorage.getItem(LS_TOKEN_KEY);
+      if (!token) return;
+      try {
+        const apiUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`;
+        const r = await fetch(apiUrl, { headers: ghHeaders() });
+        if (r.ok) {
+          const meta = await r.json();
+          localStorage.setItem(LS_SHA_KEY, meta.sha);
           isConnected = true;
           updateConnectionUI();
-          return;
         }
-        // Need a gesture — swap the "connect" button to a lightweight one-click reconnect
-        const label = document.getElementById('connLabel');
-        label.textContent = 'Click to reconnect to todos.json';
-        const btn = document.getElementById('connStatus');
-        btn.onclick = async () => {
-          const p = await h.requestPermission({ mode: 'readwrite' });
-          if (p === 'granted') {
-            fileHandle = h;
-            isConnected = true;
-            updateConnectionUI();
-          } else {
-            connectFile(); // fall back to picker if denied
-          }
-        };
-      } catch (_) {
-        // IDB or permission error — silently ignore, user can still connect manually
+      } catch (_) { /* token check failed — stay disconnected */ }
+    }
+
+    async function connectFile() {
+      const existing = localStorage.getItem(LS_TOKEN_KEY) || '';
+      const token = prompt(
+        'Paste a GitHub Personal Access Token with repo write access.\n(It will be stored only in your browser.)',
+        existing
+      );
+      if (!token) return;
+      localStorage.setItem(LS_TOKEN_KEY, token.trim());
+      // verify + fetch SHA
+      try {
+        const apiUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`;
+        const r = await fetch(apiUrl, { headers: { Authorization: 'token ' + token.trim() } });
+        if (!r.ok) { alert('Token invalid or repo not accessible (status ' + r.status + ').'); return; }
+        const meta = await r.json();
+        localStorage.setItem(LS_SHA_KEY, meta.sha);
+        isConnected = true;
+        updateConnectionUI();
+      } catch (e) {
+        alert('Connection failed: ' + e.message);
       }
     }
 
@@ -484,7 +488,7 @@
 
       if (isConnected) {
         status.className = "conn-status connected";
-        label.textContent = "Connected to todos.json";
+        label.textContent = "Connected to GitHub";
         banner.classList.add("hidden");
         document.body.classList.remove("locked");
         input.placeholder = "IU Finish roadmap deck   ·   remove velocity";
@@ -492,7 +496,7 @@
         document.getElementById("cmdSend").disabled = false;
       } else {
         status.className = "conn-status disconnected";
-        label.textContent = "Not connected — click to connect";
+        label.textContent = "No write access — click to set token";
         banner.classList.remove("hidden");
         document.body.classList.add("locked");
         input.placeholder = "Connect to todos.json to edit your list";
@@ -535,14 +539,26 @@
     }
 
     async function saveToFile() {
-      if (!fileHandle) return;
+      const token = localStorage.getItem(LS_TOKEN_KEY);
+      const sha   = localStorage.getItem(LS_SHA_KEY);
+      if (!token || !sha) return;
       try {
-        const writable = await fileHandle.createWritable();
-        await writable.write(JSON.stringify({ todos }, null, 2));
-        await writable.close();
-        flashSaved();
+        const body = JSON.stringify({ todos }, null, 2);
+        const content = btoa(unescape(encodeURIComponent(body)));
+        const r = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`, {
+          method: 'PUT',
+          headers: ghHeaders(),
+          body: JSON.stringify({ message: 'Update todos via dashboard', content, sha, branch: GH_BRANCH }),
+        });
+        if (r.ok) {
+          const data = await r.json();
+          localStorage.setItem(LS_SHA_KEY, data.content.sha);
+          flashSaved();
+        } else {
+          console.warn('GitHub save failed:', r.status, await r.text());
+        }
       } catch (e) {
-        console.warn("Save failed:", e);
+        console.warn('Save failed:', e);
       }
     }
 
