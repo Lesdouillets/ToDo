@@ -212,21 +212,77 @@
     }
     .delete-tag:hover { color: #ef4444; }
     .delete-confirm {
-      display: flex; align-items: center; gap: 6px;
-      font-size: .65rem; font-weight: 500; color: #7f1d1d;
-      background: #fef2f2; border: 1px solid #fecaca;
-      border-radius: 6px; padding: 3px 8px;
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .62rem; color: #9ca3af;
     }
     .delete-confirm.hidden { display: none; }
-    .delete-confirm button {
-      font-family: var(--font); font-size: .65rem; font-weight: 700;
-      border: none; border-radius: 4px; cursor: pointer; padding: 2px 7px;
+    .delete-confirm .btn-yes {
+      font-family: var(--font); font-size: .62rem; font-weight: 700;
+      border: none; border-radius: 3px; cursor: pointer; padding: 1px 6px;
+      background: #ef4444; color: #fff;
     }
-    .delete-confirm .btn-yes { background: #ef4444; color: #fff; }
     .delete-confirm .btn-yes:hover { background: #dc2626; }
-    .delete-confirm .btn-no  { background: #e5e7eb; color: #374151; }
-    .delete-confirm .btn-no:hover  { background: #d1d5db; }
+    .delete-confirm .btn-no {
+      font-family: var(--font); font-size: .62rem;
+      border: none; background: none; cursor: pointer; color: #c4c9d4; padding: 0 2px;
+    }
+    .delete-confirm .btn-no:hover { color: #6b7280; }
     body.locked .delete-tag { opacity: .3; cursor: not-allowed; pointer-events: none; }
+
+    /* ── Comment panel ── */
+    .card-comment { border-top: 1px solid #f3f4f6; padding-top: 8px; margin-top: 4px; display: none; }
+    .card-comment.open { display: block; }
+    .comment-area {
+      width: 100%; font-family: var(--font); font-size: .78rem; color: var(--text);
+      border: 1px solid #e5e7eb; border-radius: 6px; padding: 7px 10px;
+      resize: none; outline: none; min-height: 52px; line-height: 1.5;
+      background: #f9fafb; transition: border-color .15s;
+    }
+    .comment-area:focus { border-color: #6366f1; background: #fff; }
+    .comment-area::placeholder { color: #d1d5db; }
+    .comment-actions { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+    .btn-comment-save {
+      font-family: var(--font); font-size: .65rem; font-weight: 600;
+      padding: 2px 9px; border-radius: 5px; border: none;
+      background: #6366f1; color: #fff; cursor: pointer;
+    }
+    .btn-comment-save:hover { background: #4f46e5; }
+    .comment-del-tag { font-size: .62rem; color: #d1d5db; cursor: pointer; user-select: none; }
+    .comment-del-tag:hover { color: #ef4444; }
+    .comment-del-confirm { display: inline-flex; align-items: center; gap: 3px; font-size: .62rem; color: #9ca3af; }
+    .comment-del-confirm.hidden { display: none; }
+
+    /* ── Mention live preview ── */
+    .mention-preview { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; padding: 0 4px; }
+    .mention-preview-chip {
+      font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 5px;
+      display: inline-flex; align-items: center; gap: 3px;
+      animation: chipPop .15s ease;
+    }
+    @keyframes chipPop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* ── Date picker popup ── */
+    .date-picker-popup {
+      position: fixed; bottom: calc(var(--bar-h) + 16px); left: 50%; transform: translateX(-50%);
+      background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 8px; box-shadow: 0 4px 24px rgba(0,0,0,.12);
+      display: flex; flex-direction: column; gap: 5px;
+      z-index: 200; min-width: 170px;
+    }
+    .date-picker-popup.hidden { display: none; }
+    .dp-option {
+      font-family: var(--font); font-size: .82rem; font-weight: 500;
+      padding: 7px 14px; border-radius: 7px; border: none;
+      background: #f9fafb; color: var(--text); cursor: pointer; text-align: left;
+      transition: background .1s;
+    }
+    .dp-option:hover { background: #eff6ff; color: #6366f1; }
+    .dp-separator { height: 1px; background: #f3f4f6; }
+    .dp-custom {
+      font-family: var(--font); font-size: .78rem; padding: 5px 8px;
+      border: 1.5px solid #e5e7eb; border-radius: 6px; width: 100%; outline: none;
+    }
+    .dp-custom:focus { border-color: #6366f1; }
 
     /* ── Due Today ── */
     .due-today { max-width: 1100px; margin: 16px auto 28px; padding: 0 16px; }
@@ -396,9 +452,18 @@
     Eisenhower Matrix · Drag cards between quadrants · Maxime's marvelous todolist
   </footer>
 
+  <!-- Date picker popup -->
+  <div class="date-picker-popup hidden" id="datePickerPopup">
+    <button class="dp-option" onclick="insertDate('today')">📅 Aujourd'hui</button>
+    <button class="dp-option" onclick="insertDate('tomorrow')">➡ Demain</button>
+    <div class="dp-separator"></div>
+    <input type="date" class="dp-custom" id="dpCustomDate" onchange="insertDateFromPicker(this.value)" />
+  </div>
+
   <!-- Command bar -->
   <div class="cmd-bar">
     <div class="cmd-bar-inner">
+      <div class="mention-preview" id="mentionPreview"></div>
       <div class="cmd-hint" id="cmdHint">
         <strong>IU · IN · NU · NN</strong> [task] &nbsp;·&nbsp; <strong>important urgent</strong> [task] &nbsp;·&nbsp; <strong>remove</strong> [keyword]
         &nbsp;·&nbsp; add dependency: include <em>"waiting for X"</em> or <em>"blocked by X"</em> in your text
@@ -642,10 +707,12 @@
                draggable="true"
                data-id="${item.id}"
                ondragstart="onDragStart(event, '${item.id}')"
-               ondragend="onDragEnd(event)">
+               ondragend="onDragEnd(event)"
+               onclick="onCardClick('${item.id}', event)"
+               ondblclick="onCardDblClick('${item.id}', event)">
             <div class="card-top">
               <div class="card-actions">
-                <button class="done-btn" onclick="markDone('${item.id}')" title="Mark as done">
+                <button class="done-btn" onclick="event.stopPropagation();markDone('${item.id}')" title="Mark as done">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -653,7 +720,7 @@
               </div>
               <div class="card-body">
                 <div class="card-main">
-                  <p class="todo-text" ondblclick="editTitle('${item.id}')" title="Double-click to edit">${item.text}</p>
+                  <p class="todo-text" title="Clic pour noter · Double-clic pour éditer">${item.text}</p>
                   ${renderDepChips(item.dependency)}
                   ${renderMentionChips(item.mentions, item.id)}
                   <div class="todo-meta">
@@ -663,12 +730,19 @@
                 <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
               </div>
             </div>
-            <div class="card-footer">
+            <div class="card-comment" id="comment-panel-${item.id}" onclick="event.stopPropagation()">
+              <textarea class="comment-area" id="comment-area-${item.id}" placeholder="Ajouter une note…" rows="2">${item.comment || ''}</textarea>
+              <div class="comment-actions">
+                <button class="btn-comment-save" onclick="saveComment('${item.id}')">Save</button>
+                ${item.comment ? `<span class="comment-del-tag" onclick="showCommentDelConfirm('${item.id}')">Delete note</span><span class="comment-del-confirm hidden" id="cdel-${item.id}">confirm? <button class="btn-yes" onclick="doDeleteComment('${item.id}')">✓</button><button class="btn-no" onclick="cancelCommentDelete('${item.id}')">×</button></span>` : ''}
+              </div>
+            </div>
+            <div class="card-footer" onclick="event.stopPropagation()">
               <span class="delete-tag" onclick="showDeleteConfirm('${item.id}')">Delete</span>
               <div class="delete-confirm hidden" id="del-confirm-${item.id}">
-                Delete permanently?
-                <button class="btn-yes" onclick="confirmDelete('${item.id}')">Yes</button>
-                <button class="btn-no"  onclick="cancelDelete('${item.id}')">Cancel</button>
+                confirm?
+                <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
+                <button class="btn-no"  onclick="cancelDelete('${item.id}')">×</button>
               </div>
             </div>
           </div>`;
@@ -796,6 +870,68 @@
       todos = todos.filter(t => t.id !== id);
       render();
       persistState();
+    }
+
+    // ── Card click: single = toggle comment, double = edit title ─────────────
+    const _cardClickTimers = {};
+    function onCardClick(id, e) {
+      if (e.target.closest('button, input, textarea, .card-footer, .card-comment')) return;
+      clearTimeout(_cardClickTimers[id]);
+      _cardClickTimers[id] = setTimeout(() => toggleComment(id), 220);
+    }
+    function onCardDblClick(id, e) {
+      if (e.target.closest('button, input, textarea, .card-footer, .card-comment')) return;
+      clearTimeout(_cardClickTimers[id]);
+      editTitle(id);
+    }
+
+    // ── Comment panel ─────────────────────────────────────────────────────────
+    function toggleComment(id) {
+      if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
+      const panel = document.getElementById('comment-panel-' + id);
+      if (!panel) return;
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) {
+        const ta = document.getElementById('comment-area-' + id);
+        if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+      }
+    }
+
+    function saveComment(id) {
+      if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
+      const item = todos.find(t => t.id === id);
+      if (!item) return;
+      const ta = document.getElementById('comment-area-' + id);
+      item.comment = ta ? ta.value.trim() : '';
+      persistState();
+      // Refresh just the comment actions (add/remove delete button) without full re-render
+      const panel = document.getElementById('comment-panel-' + id);
+      if (panel) {
+        const actions = panel.querySelector('.comment-actions');
+        if (actions) {
+          actions.innerHTML = `<button class="btn-comment-save" onclick="saveComment('${id}')">Save</button>` +
+            (item.comment ? `<span class="comment-del-tag" onclick="showCommentDelConfirm('${id}')">Delete note</span><span class="comment-del-confirm hidden" id="cdel-${id}">confirm? <button class="btn-yes" onclick="doDeleteComment('${id}')">✓</button><button class="btn-no" onclick="cancelCommentDelete('${id}')">×</button></span>` : '');
+        }
+      }
+    }
+
+    function showCommentDelConfirm(id) {
+      document.getElementById('cdel-' + id)?.classList.remove('hidden');
+    }
+    function cancelCommentDelete(id) {
+      document.getElementById('cdel-' + id)?.classList.add('hidden');
+    }
+    function doDeleteComment(id) {
+      if (!isConnected) return;
+      const item = todos.find(t => t.id === id);
+      if (!item) return;
+      item.comment = '';
+      persistState();
+      render();
+      requestAnimationFrame(() => {
+        const panel = document.getElementById('comment-panel-' + id);
+        if (panel) panel.classList.add('open');
+      });
     }
 
     function restoreItem(id) {
@@ -983,9 +1119,9 @@
       const display = item.deadline ? formatDeadlineDisplay(item.deadline) : null;
       if (display) {
         const cls = deadlineColorClass(item.deadline);
-        return `<button class="deadline-badge ${cls}" onclick="editDeadline('${item.id}')" title="Click to edit deadline">${display}</button>`;
+        return `<button class="deadline-badge ${cls}" onclick="event.stopPropagation();editDeadline('${item.id}')" title="Click to edit deadline">${display}</button>`;
       }
-      return `<button class="deadline-add" onclick="editDeadline('${item.id}')" title="Add a deadline">+ date</button>`;
+      return `<button class="deadline-add" onclick="event.stopPropagation();editDeadline('${item.id}')" title="Add a deadline">+ date</button>`;
     }
 
     function editDeadline(id) {
@@ -994,6 +1130,7 @@
       const item = todos.find(t => t.id === id);
       const isoVal = (item && item.deadline) ? item.deadline : '';
       area.innerHTML = `<input type="date" class="deadline-input" value="${isoVal}"
+        onclick="event.stopPropagation()"
         onchange="saveDeadline('${id}', this.value)"
         onblur="render()"
         onkeydown="if(event.key==='Escape'||event.key==='Enter') this.blur()" />`;
@@ -1075,6 +1212,7 @@
           if (t.mentions.length) t.text = stripMentionsFromText(t.text);
           changed = true;
         }
+        if (!('comment' in t)) { t.comment = ''; changed = true; }
       });
       if (changed) {
         localStorage.setItem(LS_KEY, JSON.stringify(todos));
@@ -1234,12 +1372,80 @@
     }
 
 
+    // ── @ mention live preview ───────────────────────────────────────────────
+    function updateMentionPreview(value) {
+      const mentions = parseMentions(value);
+      const preview = document.getElementById('mentionPreview');
+      if (!mentions.length) { preview.innerHTML = ''; return; }
+      preview.innerHTML = mentions.map(name => {
+        const c = chipColor(name);
+        return `<span class="mention-preview-chip" style="background:${c.bg};color:${c.text};">@ ${name}</span>`;
+      }).join('');
+    }
+
+    // ── / date picker ────────────────────────────────────────────────────────
+    function insertDate(which) {
+      const input = document.getElementById('cmdInput');
+      const dateStr = which === 'today' ? 'today' : 'tomorrow';
+      const pos = input.selectionStart;
+      const val = input.value;
+      const sep = pos > 0 && val[pos - 1] !== ' ' ? ' ' : '';
+      input.value = val.slice(0, pos) + sep + dateStr + val.slice(pos);
+      input.selectionStart = input.selectionEnd = pos + sep.length + dateStr.length;
+      input.focus();
+      document.getElementById('datePickerPopup').classList.add('hidden');
+    }
+
+    function insertDateFromPicker(isoVal) {
+      if (!isoVal) return;
+      const [, m, d] = isoVal.split('-');
+      const dateStr = `${d}/${m}`;
+      const input = document.getElementById('cmdInput');
+      const pos = input.selectionStart;
+      const val = input.value;
+      const sep = pos > 0 && val[pos - 1] !== ' ' ? ' ' : '';
+      input.value = val.slice(0, pos) + sep + dateStr + val.slice(pos);
+      input.selectionStart = input.selectionEnd = pos + sep.length + dateStr.length;
+      input.focus();
+      document.getElementById('datePickerPopup').classList.add('hidden');
+    }
+
     // ── Init ────────────────────────────────────────────────────────────────
     migrateDeadlines(); // populate deadline field from text for legacy items
     updateConnectionUI(); // start locked
     tryAutoConnect();    // silently reconnect if handle + permission already available
     render();
     setTimeout(() => location.reload(), 600_000); // auto-refresh every 10 min
+
+    // @ mention live preview
+    document.getElementById('cmdInput').addEventListener('input', function() {
+      updateMentionPreview(this.value);
+    });
+
+    // / date picker
+    document.getElementById('cmdInput').addEventListener('keydown', function(e) {
+      if (e.key === '/') {
+        e.preventDefault();
+        const popup = document.getElementById('datePickerPopup');
+        popup.classList.toggle('hidden');
+        if (!popup.classList.contains('hidden')) {
+          document.getElementById('dpCustomDate').value = localDateISO();
+        }
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('datePickerPopup').classList.add('hidden');
+      }
+    });
+
+    // Close date picker on outside click
+    document.addEventListener('click', function(e) {
+      const popup = document.getElementById('datePickerPopup');
+      if (!popup.classList.contains('hidden') &&
+          !popup.contains(e.target) &&
+          e.target.id !== 'cmdInput') {
+        popup.classList.add('hidden');
+      }
+    });
   </script>
 
 </body>
