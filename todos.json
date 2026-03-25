@@ -41,6 +41,19 @@
       "done": false,
       "completedAt": null,
       "comment": ""
+    },
+    {
+      "id": "a15779da-4145-42c9-beeb-b33d74b2899d",
+      "text": "Répondre à Rémi concernant le wording de la fin de l'XP Si La France Gagne Je",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-03-26",
+      "mentions": [],
+      "createdAt": "2026-03-25T13:55:49.413Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
