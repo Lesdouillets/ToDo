@@ -12,6 +12,19 @@
       "createdAt": "2026-03-24T09:53:58.832Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "9b66e27f-d4f0-4777-a5fa-7cd35d97a5b9",
+      "text": "Préparer présentation sur les Bons Plans, se synchroniser avec Damien F",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-03-25T09:25:07.856Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
