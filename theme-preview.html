@@ -3,244 +3,284 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Theme Preview — Modern</title>
+<title>Theme Preview — Bold</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Inter', system-ui, sans-serif; display: flex; min-height: 100vh; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { display: flex; min-height: 100vh; font-family: 'DM Sans', system-ui, sans-serif; }
+.divider { width: 1px; background: linear-gradient(to bottom, transparent, #6366f1 30%, #6366f1 70%, transparent); flex-shrink: 0; }
 
-  /* ── Shared ── */
-  .panel { flex: 1; padding: 28px 22px 32px; display: flex; flex-direction: column; gap: 18px; position: relative; overflow: hidden; }
-  .panel-label { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; opacity: .35; margin-bottom: 2px; }
+/* ═══════════════════════════════════════
+   LIGHT — Editorial Clean
+   Parti pris : papier premium, typographie
+   éditoriale, cards comme des post-its de
+   qualité. Zéro fond coloré sur quadrants.
+   ═══════════════════════════════════════ */
+.light {
+  flex: 1; padding: 28px 22px 32px;
+  background:
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(254,243,199,.8) 0%, transparent 50%),
+    #f9f7f4;
+  color: #1a1614;
+  display: flex; flex-direction: column; gap: 20px;
+  position: relative; overflow: hidden;
+}
 
-  .divider { width: 1px; background: linear-gradient(to bottom, transparent, rgba(99,102,241,.5) 30%, rgba(99,102,241,.5) 70%, transparent); flex-shrink: 0; }
+/* Paper texture */
+.light::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,.018) 28px, rgba(0,0,0,.018) 29px);
+  background-size: 100% 29px;
+}
+.light > * { position: relative; z-index: 1; }
 
-  /* ═══════════════════════════════════════
-     LIGHT — Warm Gradient Parchment
-     ═══════════════════════════════════════ */
-  .light {
-    background:
-      radial-gradient(ellipse 80% 60% at 10% -10%, rgba(253,230,200,.7) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 95% 95%, rgba(199,210,254,.45) 0%, transparent 55%),
-      #f5f0e8;
-    color: #1a1510;
-  }
+.light .mode-label { font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #c9b99a; }
 
-  /* Grain overlay */
-  .light::after {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    opacity: .025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-    background-size: 128px 128px;
-  }
+.light .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.light .title {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 1.5rem; line-height: 1.15; color: #1a1614;
+}
+.light .title em { font-style: italic; color: #6366f1; }
+.light .header-right { display: flex; align-items: center; gap: 8px; }
+.light .badge {
+  font-size: .65rem; font-weight: 700; padding: 3px 11px; border-radius: 999px;
+  background: #1a1614; color: #f9f7f4;
+  letter-spacing: .02em;
+}
+.light .toggle {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1.5px solid #e4d9cc; background: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: .88rem;
+  cursor: pointer;
+}
 
-  .light > * { position: relative; z-index: 1; }
+.light .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-  .light .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid rgba(200,180,150,.35); }
-  .light .title { font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em; }
-  .light .title span { color: #6366f1; }
-  .light .badge {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    color: #fff; font-size: .67rem; font-weight: 700;
-    padding: 3px 11px; border-radius: 999px;
-    box-shadow: 0 2px 8px rgba(99,102,241,.35);
-  }
-  .light .toggle {
-    width: 30px; height: 30px; border-radius: 50%;
-    border: 1.5px solid rgba(200,180,150,.5);
-    background: rgba(255,255,255,.8);
-    backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center; font-size: .9rem;
-    box-shadow: 0 1px 4px rgba(90,60,20,.08);
-  }
+/* Quadrant : pas de fond coloré — juste une bordure TOP */
+.light .quadrant {
+  background: #fff;
+  border: 1px solid #ede8e0;
+  border-top: 3px solid;
+  border-radius: 0 0 12px 12px;
+  padding: 14px 12px 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.04);
+}
+.light .q-iu { border-top-color: #ef4444; }
+.light .q-in { border-top-color: #3b82f6; }
+.light .q-label { font-size: .7rem; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
+.light .q-label-iu { color: #ef4444; }
+.light .q-label-in { color: #3b82f6; }
+.light .q-count {
+  margin-left: auto; font-size: .58rem; font-weight: 700;
+  width: 17px; height: 17px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: #fff;
+}
+.light .q-count-iu { background: #ef4444; }
+.light .q-count-in { background: #3b82f6; }
 
-  .light .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* Cards : feuilles de papier avec shadow physique */
+.light .card {
+  background: #fff;
+  border: 1px solid #ede8e0;
+  border-radius: 6px; padding: 9px 11px 7px;
+  margin-top: 8px;
+  box-shadow: 1px 2px 0 #ede8e0, 2px 5px 12px rgba(0,0,0,.07);
+  transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
+  cursor: pointer;
+}
+.light .card:hover {
+  transform: translateY(-3px) rotate(-.4deg);
+  box-shadow: 2px 8px 0 #e8e0d5, 4px 14px 20px rgba(0,0,0,.1);
+}
+.light .card-iu { border-left: 2px solid #ef4444; }
+.light .card-in { border-left: 2px solid #3b82f6; }
+.light .card-text { font-size: .82rem; line-height: 1.5; color: #1a1614; }
+.light .card-meta { font-size: .6rem; color: #b5a898; margin-top: 5px; }
+.light .card-overdue { font-size: .6rem; color: #ef4444; font-weight: 700; margin-top: 5px; letter-spacing: .04em; }
 
-  .light .quadrant {
-    border-radius: 14px; padding: 14px 12px;
-    border: 1px solid;
-  }
-  .light .q-iu {
-    background: linear-gradient(140deg, #fff5f5 0%, #fef2f2 100%);
-    border-color: rgba(239,68,68,.2);
-    box-shadow: 0 4px 20px rgba(239,68,68,.08), inset 0 1px 0 rgba(255,255,255,.9);
-  }
-  .light .q-in {
-    background: linear-gradient(140deg, #f0f5ff 0%, #eff6ff 100%);
-    border-color: rgba(59,130,246,.2);
-    box-shadow: 0 4px 20px rgba(59,130,246,.07), inset 0 1px 0 rgba(255,255,255,.9);
-  }
-  .light .q-label-iu { color: #ef4444; font-size: .73rem; font-weight: 700; margin-bottom: 2px; }
-  .light .q-label-in { color: #3b82f6; font-size: .73rem; font-weight: 700; margin-bottom: 2px; }
+/* Cmd bar : papier flottant */
+.light .cmdbar {
+  background: #fff;
+  border: 1px solid #e4d9cc;
+  border-radius: 14px; padding: 10px 14px;
+  box-shadow: 0 4px 0 #e4d9cc, 0 8px 24px rgba(0,0,0,.08);
+  display: flex; gap: 8px; align-items: center;
+}
+.light .cmdinput {
+  flex: 1; border: 1.5px solid #e4d9cc; border-radius: 999px;
+  padding: 7px 13px; font-size: .82rem; font-family: 'DM Sans', sans-serif;
+  background: #faf8f5; color: #1a1614; outline: none;
+}
+.light .cmdinput::placeholder { color: #c9b99a; }
+.light .cmdsend {
+  background: #1a1614; color: #f9f7f4; border: none;
+  padding: 8px 16px; border-radius: 999px;
+  font-size: .79rem; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  letter-spacing: .02em;
+  transition: background .15s;
+}
+.light .cmdsend:hover { background: #6366f1; }
 
-  .light .card {
-    background: #fff;
-    border: 1px solid rgba(200,180,150,.3);
-    border-left: 3px solid #ef4444;
-    border-radius: 8px; padding: 9px 11px 7px;
-    margin-top: 8px;
-    box-shadow: 0 1px 2px rgba(90,60,20,.04), 0 4px 14px rgba(239,68,68,.08);
-    transition: transform .15s, box-shadow .2s;
-  }
-  .light .card:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(90,60,20,.06), 0 8px 24px rgba(239,68,68,.12); }
-
-  .light .card-b {
-    background: #fff;
-    border: 1px solid rgba(200,180,150,.3);
-    border-left: 3px solid #3b82f6;
-    border-radius: 8px; padding: 9px 11px 7px; margin-top: 8px;
-    box-shadow: 0 1px 2px rgba(90,60,20,.04), 0 4px 14px rgba(59,130,246,.08);
-  }
-  .light .card-text { font-size: .81rem; line-height: 1.5; color: #1a1510; }
-  .light .card-meta { font-size: .6rem; color: #a08a78; margin-top: 5px; }
-
-  .light .cmdbar {
-    background: rgba(255,255,255,.85);
-    border: 1px solid rgba(200,180,150,.4);
-    border-radius: 18px; padding: 10px 14px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 8px 32px rgba(90,60,20,.1), 0 1px 0 rgba(255,255,255,.9) inset;
-    display: flex; gap: 8px; align-items: center;
-  }
-  .light .cmdinput {
-    flex: 1; border: 1.5px solid rgba(200,180,150,.4); border-radius: 999px;
-    padding: 7px 13px; font-size: .82rem;
-    background: rgba(245,240,232,.6);
-    color: #1a1510; outline: none;
-  }
-  .light .cmdinput::placeholder { color: #b5a898; }
-  .light .cmdsend {
-    background: linear-gradient(135deg, #6366f1, #7c3aed);
-    color: #fff; border: none;
-    padding: 8px 16px; border-radius: 999px;
-    font-size: .79rem; font-weight: 700;
-    box-shadow: 0 2px 10px rgba(99,102,241,.4);
-  }
-
-  .light .palette { display: flex; gap: 5px; flex-wrap: wrap; }
-  .light .swatch { width: 26px; height: 26px; border-radius: 6px; border: 1px solid rgba(0,0,0,.07); }
+.light .palette { display: flex; gap: 5px; }
+.light .swatch { width: 24px; height: 24px; border-radius: 5px; border: 1px solid rgba(0,0,0,.07); }
 
 
-  /* ═══════════════════════════════════════
-     DARK — Deep Night (elevated)
-     ═══════════════════════════════════════ */
-  .dark {
-    background:
-      radial-gradient(ellipse 70% 55% at 85% 5%,  rgba(99,102,241,.18) 0%, transparent 55%),
-      radial-gradient(ellipse 55% 45% at 5%  95%,  rgba(139,92,246,.14) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 40% at 50% 110%, rgba(59,130,246,.1) 0%,  transparent 50%),
-      #0a0910;
-    color: #e8e4f0;
-  }
+/* ═══════════════════════════════════════
+   DARK — Neon Ops
+   Parti pris : war-room opérationnel,
+   navy profond, halos colorés, glass cards.
+   Chaque quadrant rayonne sa couleur.
+   ═══════════════════════════════════════ */
+.dark {
+  flex: 1; padding: 28px 22px 32px;
+  background:
+    radial-gradient(ellipse 70% 55% at 75% -5%,  rgba(30,40,80,.9) 0%,  transparent 55%),
+    radial-gradient(ellipse 50% 40% at 5%  100%, rgba(20,15,50,.8) 0%,  transparent 50%),
+    #070a12;
+  color: #c8d0e8;
+  display: flex; flex-direction: column; gap: 20px;
+  position: relative; overflow: hidden;
+}
 
-  /* Grain overlay */
-  .dark::after {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none; z-index: 0;
-    opacity: .055;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-    background-size: 128px 128px;
-  }
+/* Subtle dot grid */
+.dark::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
 
-  .dark > * { position: relative; z-index: 1; }
+/* Grain */
+.dark::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  opacity: .06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
 
-  .dark .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.07); }
-  .dark .title { font-size: 1.3rem; font-weight: 800; letter-spacing: -.03em; }
-  .dark .title span {
-    background: linear-gradient(90deg, #a5b4fc, #c4b5fd);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .dark .badge {
-    background: rgba(99,102,241,.2);
-    border: 1px solid rgba(99,102,241,.35);
-    color: #a5b4fc; font-size: .67rem; font-weight: 700;
-    padding: 3px 11px; border-radius: 999px;
-  }
-  .dark .toggle {
-    width: 30px; height: 30px; border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.1);
-    background: rgba(255,255,255,.05);
-    backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center; font-size: .9rem;
-  }
+.dark > * { position: relative; z-index: 1; }
 
-  .dark .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dark .mode-label { font-size: .58rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #2a3050; }
 
-  .dark .quadrant { border-radius: 14px; padding: 14px 12px; border: 1px solid; }
-  .dark .q-iu {
-    background: linear-gradient(140deg, rgba(239,68,68,.12) 0%, rgba(239,68,68,.06) 100%);
-    border-color: rgba(239,68,68,.2);
-    box-shadow: 0 4px 24px rgba(239,68,68,.08), inset 0 1px 0 rgba(239,68,68,.1);
-  }
-  .dark .q-in {
-    background: linear-gradient(140deg, rgba(59,130,246,.12) 0%, rgba(59,130,246,.06) 100%);
-    border-color: rgba(59,130,246,.2);
-    box-shadow: 0 4px 24px rgba(59,130,246,.08), inset 0 1px 0 rgba(59,130,246,.1);
-  }
-  .dark .q-label-iu { color: #f87171; font-size: .73rem; font-weight: 700; margin-bottom: 2px; }
-  .dark .q-label-in { color: #60a5fa; font-size: .73rem; font-weight: 700; margin-bottom: 2px; }
+.dark .header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dark .title { font-size: 1.4rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+.dark .title em {
+  font-style: normal;
+  background: linear-gradient(90deg, #818cf8, #c084fc, #818cf8);
+  background-size: 200%;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer { 0% { background-position: 0% } 100% { background-position: 200% } }
+.dark .header-right { display: flex; align-items: center; gap: 8px; }
+.dark .badge {
+  font-size: .65rem; font-weight: 700; padding: 3px 11px; border-radius: 999px;
+  background: rgba(129,140,248,.12); border: 1px solid rgba(129,140,248,.25);
+  color: #818cf8; letter-spacing: .02em;
+}
+.dark .toggle {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.04); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center; font-size: .88rem;
+}
 
-  .dark .card {
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.08);
-    border-left: 2px solid #ef4444;
-    border-radius: 8px; padding: 9px 11px 7px; margin-top: 8px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.25), 0 0 0 0 rgba(239,68,68,.0);
-    backdrop-filter: blur(4px);
-    transition: background .15s, box-shadow .2s, transform .15s;
-  }
-  .dark .card:hover {
-    background: rgba(255,255,255,.08);
-    box-shadow: 0 4px 20px rgba(0,0,0,.4), 0 0 16px rgba(239,68,68,.12);
-    transform: translateY(-1px);
-  }
-  .dark .card-b {
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.08);
-    border-left: 2px solid #3b82f6;
-    border-radius: 8px; padding: 9px 11px 7px; margin-top: 8px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.25);
-    backdrop-filter: blur(4px);
-  }
-  .dark .card-text { font-size: .81rem; line-height: 1.5; color: #d8d3ec; }
-  .dark .card-meta { font-size: .6rem; color: #4a4660; margin-top: 5px; }
+.dark .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-  .dark .cmdbar {
-    background: rgba(14,12,22,.9);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 18px; padding: 10px 14px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 8px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
-    display: flex; gap: 8px; align-items: center;
-  }
-  .dark .cmdinput {
-    flex: 1; border: 1px solid rgba(255,255,255,.1); border-radius: 999px;
-    padding: 7px 13px; font-size: .82rem;
-    background: rgba(255,255,255,.06);
-    color: #e8e4f0; outline: none;
-  }
-  .dark .cmdinput::placeholder { color: #3a3650; }
-  .dark .cmdsend {
-    background: linear-gradient(135deg, #4f46e5, #6d28d9);
-    color: #fff; border: none;
-    padding: 8px 16px; border-radius: 999px;
-    font-size: .79rem; font-weight: 700;
-    box-shadow: 0 2px 12px rgba(79,70,229,.45);
-  }
+/* Quadrants : glass avec halo coloré */
+.dark .quadrant {
+  border-radius: 14px; padding: 14px 12px;
+  backdrop-filter: blur(8px);
+}
+.dark .q-iu {
+  background: linear-gradient(135deg, rgba(239,68,68,.1) 0%, rgba(239,68,68,.04) 100%);
+  border: 1px solid rgba(239,68,68,.22);
+  box-shadow: 0 0 40px rgba(239,68,68,.06), inset 0 1px 0 rgba(239,68,68,.15);
+}
+.dark .q-in {
+  background: linear-gradient(135deg, rgba(59,130,246,.1) 0%, rgba(59,130,246,.04) 100%);
+  border: 1px solid rgba(59,130,246,.22);
+  box-shadow: 0 0 40px rgba(59,130,246,.06), inset 0 1px 0 rgba(59,130,246,.15);
+}
+.dark .q-label { font-size: .7rem; font-weight: 700; margin-bottom: 2px; display: flex; align-items: center; gap: 5px; }
+.dark .q-label-iu { color: #f87171; }
+.dark .q-label-in { color: #60a5fa; }
+.dark .q-count {
+  margin-left: auto; font-size: .58rem; font-weight: 700;
+  width: 17px; height: 17px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.dark .q-count-iu { background: rgba(239,68,68,.25); color: #f87171; }
+.dark .q-count-in { background: rgba(59,130,246,.25); color: #60a5fa; }
 
-  .dark .palette { display: flex; gap: 5px; flex-wrap: wrap; }
-  .dark .swatch { width: 26px; height: 26px; border-radius: 6px; border: 1px solid rgba(255,255,255,.1); }
+/* Cards : glass avec halo qui saigne */
+.dark .card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 8px; padding: 9px 11px 7px;
+  margin-top: 8px;
+  backdrop-filter: blur(6px);
+  transition: background .15s, box-shadow .2s, transform .15s;
+  cursor: pointer;
+}
+.dark .card-iu {
+  border-left: 2px solid rgba(239,68,68,.7);
+  box-shadow: -6px 0 20px rgba(239,68,68,.12), 0 4px 16px rgba(0,0,0,.3);
+}
+.dark .card-in {
+  border-left: 2px solid rgba(59,130,246,.7);
+  box-shadow: -6px 0 20px rgba(59,130,246,.12), 0 4px 16px rgba(0,0,0,.3);
+}
+.dark .card:hover {
+  background: rgba(255,255,255,.08);
+  transform: translateY(-2px);
+}
+.dark .card-iu:hover { box-shadow: -8px 0 28px rgba(239,68,68,.22), 0 8px 24px rgba(0,0,0,.4); }
+.dark .card-in:hover { box-shadow: -8px 0 28px rgba(59,130,246,.22), 0 8px 24px rgba(0,0,0,.4); }
+.dark .card-text { font-size: .82rem; line-height: 1.5; color: #d0d8f0; }
+.dark .card-meta { font-size: .6rem; color: #384060; margin-top: 5px; }
+.dark .card-overdue { font-size: .6rem; color: #f87171; font-weight: 700; margin-top: 5px; letter-spacing: .04em; }
+
+/* Cmd bar : vrai glass */
+.dark .cmdbar {
+  background: rgba(7,10,18,.85);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px; padding: 10px 14px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);
+  display: flex; gap: 8px; align-items: center;
+}
+.dark .cmdinput {
+  flex: 1; border: 1px solid rgba(255,255,255,.1); border-radius: 999px;
+  padding: 7px 13px; font-size: .82rem; font-family: 'DM Sans', sans-serif;
+  background: rgba(255,255,255,.05); color: #c8d0e8; outline: none;
+}
+.dark .cmdinput::placeholder { color: #2a3050; }
+.dark .cmdsend {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff; border: none;
+  padding: 8px 16px; border-radius: 999px;
+  font-size: .79rem; font-weight: 700; font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 2px 14px rgba(79,70,229,.5);
+  letter-spacing: .02em;
+}
+
+.dark .palette { display: flex; gap: 5px; }
+.dark .swatch { width: 24px; height: 24px; border-radius: 5px; border: 1px solid rgba(255,255,255,.08); }
 </style>
 </head>
 <body>
 
 <!-- LIGHT -->
 <div class="panel light">
-  <div class="panel-label">☀️ Light — Warm Parchment</div>
+  <div class="mode-label">☀️ Light — Editorial Clean</div>
 
   <div class="header">
-    <div class="title">Maxime's <span>marvelous</span> todolist</div>
-    <div style="display:flex;gap:8px;align-items:center;">
+    <div class="title">Maxime's<br><em>marvelous</em> todolist</div>
+    <div class="header-right">
       <span class="badge">12 active</span>
       <div class="toggle">☀️</div>
     </div>
@@ -248,19 +288,19 @@
 
   <div class="grid">
     <div class="quadrant q-iu">
-      <div class="q-label-iu">🔥 Do First</div>
-      <div class="card">
+      <div class="q-label q-label-iu">🔥 Do First <span class="q-count q-count-iu">3</span></div>
+      <div class="card card-iu">
         <div class="card-text">Finir la roadmap Q2</div>
         <div class="card-meta">created 27 Mar</div>
       </div>
-      <div class="card" style="border-left-color:#ef4444;">
+      <div class="card card-iu">
         <div class="card-text">Réunion client urgent</div>
-        <div class="card-meta" style="color:#ef4444;font-weight:600;">⚠ OVERDUE</div>
+        <div class="card-overdue">⚠ OVERDUE</div>
       </div>
     </div>
     <div class="quadrant q-in">
-      <div class="q-label-in">📅 Schedule</div>
-      <div class="card-b">
+      <div class="q-label q-label-in">📅 Schedule <span class="q-count q-count-in">1</span></div>
+      <div class="card card-in">
         <div class="card-text">Préparer la présentation</div>
         <div class="card-meta" style="color:#3b82f6;">due 30 Mar</div>
       </div>
@@ -273,18 +313,18 @@
   </div>
 
   <div>
-    <div class="panel-label" style="margin-bottom:8px;">Palette</div>
+    <div class="mode-label" style="margin-bottom:8px;">Palette</div>
     <div class="palette">
-      <div class="swatch" style="background:#f5f0e8;" title="Page bg"></div>
-      <div class="swatch" style="background:#ffffff;" title="Card"></div>
-      <div class="swatch" style="background:rgba(200,180,150,.3);" title="Border"></div>
-      <div class="swatch" style="background:#1a1510;" title="Text"></div>
-      <div class="swatch" style="background:#8a7d6b;" title="Muted"></div>
-      <div class="swatch" style="background:linear-gradient(135deg,#6366f1,#7c3aed);" title="Accent"></div>
-      <div class="swatch" style="background:#ef4444;" title="IU"></div>
-      <div class="swatch" style="background:#3b82f6;" title="IN"></div>
-      <div class="swatch" style="background:#f97316;" title="NU"></div>
-      <div class="swatch" style="background:#9ca3af;" title="NN"></div>
+      <div class="swatch" style="background:#f9f7f4;"></div>
+      <div class="swatch" style="background:#ffffff;"></div>
+      <div class="swatch" style="background:#ede8e0;"></div>
+      <div class="swatch" style="background:#1a1614;"></div>
+      <div class="swatch" style="background:#b5a898;"></div>
+      <div class="swatch" style="background:#6366f1;"></div>
+      <div class="swatch" style="background:#ef4444;"></div>
+      <div class="swatch" style="background:#3b82f6;"></div>
+      <div class="swatch" style="background:#f97316;"></div>
+      <div class="swatch" style="background:#9ca3af;"></div>
     </div>
   </div>
 </div>
@@ -293,11 +333,11 @@
 
 <!-- DARK -->
 <div class="panel dark">
-  <div class="panel-label">🌙 Dark — Deep Night</div>
+  <div class="mode-label">🌙 Dark — Neon Ops</div>
 
   <div class="header">
-    <div class="title">Maxime's <span>marvelous</span> todolist</div>
-    <div style="display:flex;gap:8px;align-items:center;">
+    <div class="title">Maxime's<br><em>marvelous</em> todolist</div>
+    <div class="header-right">
       <span class="badge">12 active</span>
       <div class="toggle">🌙</div>
     </div>
@@ -305,19 +345,19 @@
 
   <div class="grid">
     <div class="quadrant q-iu">
-      <div class="q-label-iu">🔥 Do First</div>
-      <div class="card">
+      <div class="q-label q-label-iu">🔥 Do First <span class="q-count q-count-iu">3</span></div>
+      <div class="card card-iu">
         <div class="card-text">Finir la roadmap Q2</div>
         <div class="card-meta">created 27 Mar</div>
       </div>
-      <div class="card">
+      <div class="card card-iu">
         <div class="card-text">Réunion client urgent</div>
-        <div class="card-meta" style="color:#f87171;font-weight:600;">⚠ OVERDUE</div>
+        <div class="card-overdue">⚠ OVERDUE</div>
       </div>
     </div>
     <div class="quadrant q-in">
-      <div class="q-label-in">📅 Schedule</div>
-      <div class="card-b">
+      <div class="q-label q-label-in">📅 Schedule <span class="q-count q-count-in">1</span></div>
+      <div class="card card-in">
         <div class="card-text">Préparer la présentation</div>
         <div class="card-meta" style="color:#60a5fa;">due 30 Mar</div>
       </div>
@@ -330,14 +370,14 @@
   </div>
 
   <div>
-    <div class="panel-label" style="margin-bottom:8px;">Palette</div>
+    <div class="mode-label" style="margin-bottom:8px;">Palette</div>
     <div class="palette">
-      <div class="swatch" style="background:#0a0910;"></div>
-      <div class="swatch" style="background:rgba(255,255,255,.055);"></div>
+      <div class="swatch" style="background:#070a12;"></div>
+      <div class="swatch" style="background:rgba(255,255,255,.05);"></div>
       <div class="swatch" style="background:rgba(255,255,255,.09);"></div>
-      <div class="swatch" style="background:#e8e4f0;"></div>
-      <div class="swatch" style="background:#4a4660;"></div>
-      <div class="swatch" style="background:linear-gradient(135deg,#a5b4fc,#c4b5fd);"></div>
+      <div class="swatch" style="background:#c8d0e8;"></div>
+      <div class="swatch" style="background:#384060;"></div>
+      <div class="swatch" style="background:linear-gradient(135deg,#818cf8,#c084fc);"></div>
       <div class="swatch" style="background:#f87171;"></div>
       <div class="swatch" style="background:#60a5fa;"></div>
       <div class="swatch" style="background:#fb923c;"></div>
