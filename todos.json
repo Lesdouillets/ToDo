@@ -39,7 +39,7 @@
       "mentions": [],
       "createdAt": "2026-03-25T13:53:18.654Z",
       "done": true,
-      "completedAt": "2026-03-27T13:43:54.588Z",
+      "completedAt": "2026-03-27T13:44:09.805Z",
       "comment": ""
     },
     {
@@ -52,8 +52,8 @@
       "deadline": "2026-03-25",
       "mentions": [],
       "createdAt": "2026-03-25T13:55:49.413Z",
-      "done": true,
-      "completedAt": "2026-03-27T13:43:55.654Z"
+      "done": false,
+      "completedAt": null
     }
   ]
 }
