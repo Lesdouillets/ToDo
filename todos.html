@@ -229,28 +229,63 @@
     .delete-confirm .btn-no:hover { color: #6b7280; }
     body.locked .delete-tag { opacity: .3; cursor: not-allowed; pointer-events: none; }
 
-    /* ── Comment panel ── */
-    .card-comment { border-top: 1px solid #f3f4f6; padding-top: 8px; margin-top: 4px; display: none; }
-    .card-comment.open { display: block; }
+    /* ── Comment modal ── */
+    .comment-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.3);
+      z-index: 300; display: flex; align-items: center; justify-content: center;
+      animation: fadeOverlay .15s ease;
+    }
+    .comment-modal-overlay.hidden { display: none; }
+    @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
+    .comment-modal {
+      background: #fff; border-radius: 12px; padding: 20px;
+      width: min(460px, 90vw); box-shadow: 0 8px 40px rgba(0,0,0,.18);
+      animation: slideUpModal .15s ease;
+    }
+    @keyframes slideUpModal { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .comment-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .comment-modal-title { font-size: .82rem; font-weight: 600; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 12px; }
+    .comment-modal-close { font-family: var(--font); font-size: 1.2rem; border: none; background: none; cursor: pointer; color: #9ca3af; padding: 0 2px; line-height: 1; }
+    .comment-modal-close:hover { color: var(--text); }
     .comment-area {
-      width: 100%; font-family: var(--font); font-size: .78rem; color: var(--text);
-      border: 1px solid #e5e7eb; border-radius: 6px; padding: 7px 10px;
-      resize: none; outline: none; min-height: 52px; line-height: 1.5;
+      width: 100%; font-family: var(--font); font-size: .82rem; color: var(--text);
+      border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px;
+      resize: vertical; outline: none; min-height: 80px; line-height: 1.6;
       background: #f9fafb; transition: border-color .15s;
     }
     .comment-area:focus { border-color: #6366f1; background: #fff; }
     .comment-area::placeholder { color: #d1d5db; }
-    .comment-actions { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+    .comment-actions { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
     .btn-comment-save {
-      font-family: var(--font); font-size: .65rem; font-weight: 600;
-      padding: 2px 9px; border-radius: 5px; border: none;
+      font-family: var(--font); font-size: .75rem; font-weight: 600;
+      padding: 5px 14px; border-radius: 6px; border: none;
       background: #6366f1; color: #fff; cursor: pointer;
     }
     .btn-comment-save:hover { background: #4f46e5; }
-    .comment-del-tag { font-size: .62rem; color: #d1d5db; cursor: pointer; user-select: none; }
+    .comment-del-tag { font-size: .72rem; color: #d1d5db; cursor: pointer; user-select: none; }
     .comment-del-tag:hover { color: #ef4444; }
-    .comment-del-confirm { display: inline-flex; align-items: center; gap: 3px; font-size: .62rem; color: #9ca3af; }
+    .comment-del-confirm { display: inline-flex; align-items: center; gap: 3px; font-size: .68rem; color: #9ca3af; }
     .comment-del-confirm.hidden { display: none; }
+
+    /* ── Comment badge on card ── */
+    .comment-badge {
+      font-size: .6rem; color: #d1d5db; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 2px;
+      background: none; border: none; padding: 0; font-family: var(--font);
+      transition: color .15s;
+    }
+    .comment-badge:hover { color: #6366f1; }
+    .comment-badge.has-comment { color: #6366f1; font-weight: 600; }
+
+    /* ── Deadline quick picker ── */
+    .dl-picker { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+    .dl-quick { display: flex; gap: 4px; }
+    .dl-quick-btn {
+      font-family: var(--font); font-size: .62rem; font-weight: 600;
+      padding: 2px 7px; border-radius: 5px; border: none;
+      background: #eff6ff; color: #3b82f6; cursor: pointer; transition: background .1s;
+    }
+    .dl-quick-btn:hover { background: #dbeafe; }
 
     /* ── Mention live preview ── */
     .mention-preview { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; padding: 0 4px; }
@@ -452,6 +487,22 @@
     Eisenhower Matrix · Drag cards between quadrants · Maxime's marvelous todolist
   </footer>
 
+  <!-- Comment modal -->
+  <div class="comment-modal-overlay hidden" id="commentModalOverlay" onclick="closeCommentModal()">
+    <div class="comment-modal" onclick="event.stopPropagation()">
+      <div class="comment-modal-header">
+        <span class="comment-modal-title" id="commentModalTitle"></span>
+        <button class="comment-modal-close" onclick="closeCommentModal()">×</button>
+      </div>
+      <textarea class="comment-area" id="commentModalArea" placeholder="Ajouter une note…" rows="5"></textarea>
+      <div class="comment-actions">
+        <button class="btn-comment-save" onclick="saveCommentModal()">Save</button>
+        <span class="comment-del-tag" id="commentModalDelTag" style="display:none;" onclick="showCommentModalDelConfirm()">Delete note</span>
+        <span class="comment-del-confirm hidden" id="commentModalDelConfirm">confirm? <button class="btn-yes" onclick="doDeleteCommentModal()">✓</button><button class="btn-no" onclick="cancelCommentModalDelete()">×</button></span>
+      </div>
+    </div>
+  </div>
+
   <!-- Date picker popup -->
   <div class="date-picker-popup hidden" id="datePickerPopup">
     <button class="dp-option" onclick="insertDate('today')">📅 Aujourd'hui</button>
@@ -535,8 +586,24 @@
         updateConnectionUI();
       }
 
-      // 2. Always fetch the latest todos.json from GitHub (public raw, no auth)
+      // 2. Fetch latest todos.json — via API (gets fresh SHA) if token exists, else via raw URL
       try {
+        if (token) {
+          // API fetch keeps SHA in sync → saves won't fail with stale SHA
+          const apiUrl = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}&t=${Date.now()}`;
+          const r = await fetch(apiUrl, { headers: { Authorization: 'token ' + token } });
+          if (r.ok) {
+            const meta = await r.json();
+            localStorage.setItem(LS_SHA_KEY, meta.sha);
+            const data = JSON.parse(atob(meta.content.replace(/\n/g, '')));
+            todos = data.todos || [];
+            localStorage.setItem(LS_KEY, JSON.stringify(todos));
+            localStorage.setItem(LS_GEN_KEY, new Date().toISOString());
+            render();
+            return;
+          }
+        }
+        // Fallback: raw URL (no auth, no SHA update)
         const rawUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
         const r = await fetch(rawUrl);
         if (r.ok) {
@@ -702,17 +769,16 @@
               <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-5a1 1 0 00-1 1v2a1 1 0 002 0V9a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
               OVERDUE
             </div>` : '';
+          const commentCount = item.comment ? '1' : '';
           return `
           <div class="todo-card${isOverdue ? ' is-overdue' : ''}"
                draggable="true"
                data-id="${item.id}"
                ondragstart="onDragStart(event, '${item.id}')"
-               ondragend="onDragEnd(event)"
-               onclick="onCardClick('${item.id}', event)"
-               ondblclick="onCardDblClick('${item.id}', event)">
+               ondragend="onDragEnd(event)">
             <div class="card-top">
               <div class="card-actions">
-                <button class="done-btn" onclick="event.stopPropagation();markDone('${item.id}')" title="Mark as done">
+                <button class="done-btn" onclick="markDone('${item.id}')" title="Mark as done">
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -720,30 +786,25 @@
               </div>
               <div class="card-body">
                 <div class="card-main">
-                  <p class="todo-text" title="Clic pour noter · Double-clic pour éditer">${item.text}</p>
+                  <p class="todo-text" ondblclick="editTitle('${item.id}')" title="Double-clic pour éditer">${item.text}</p>
                   ${renderDepChips(item.dependency)}
                   ${renderMentionChips(item.mentions, item.id)}
-                  <div class="todo-meta">
-                    <span class="meta-date">Added ${fmtDate(item.createdAt)}</span>
-                  </div>
                 </div>
                 <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
               </div>
             </div>
-            <div class="card-comment" id="comment-panel-${item.id}" onclick="event.stopPropagation()">
-              <textarea class="comment-area" id="comment-area-${item.id}" placeholder="Ajouter une note…" rows="2">${item.comment || ''}</textarea>
-              <div class="comment-actions">
-                <button class="btn-comment-save" onclick="saveComment('${item.id}')">Save</button>
-                ${item.comment ? `<span class="comment-del-tag" onclick="showCommentDelConfirm('${item.id}')">Delete note</span><span class="comment-del-confirm hidden" id="cdel-${item.id}">confirm? <button class="btn-yes" onclick="doDeleteComment('${item.id}')">✓</button><button class="btn-no" onclick="cancelCommentDelete('${item.id}')">×</button></span>` : ''}
-              </div>
-            </div>
-            <div class="card-footer" onclick="event.stopPropagation()">
+            <div class="card-footer">
               <span class="delete-tag" onclick="showDeleteConfirm('${item.id}')">Delete</span>
               <div class="delete-confirm hidden" id="del-confirm-${item.id}">
                 confirm?
                 <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
                 <button class="btn-no"  onclick="cancelDelete('${item.id}')">×</button>
               </div>
+              <button class="comment-badge${item.comment ? ' has-comment' : ''}" onclick="openCommentModal('${item.id}')" title="Note">
+                <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+                ${commentCount}
+              </button>
+              <span class="meta-date" style="margin-left:auto;">${fmtDate(item.createdAt)}</span>
             </div>
           </div>`;
         }).join("");
@@ -872,66 +933,53 @@
       persistState();
     }
 
-    // ── Card click: single = toggle comment, double = edit title ─────────────
-    const _cardClickTimers = {};
-    function onCardClick(id, e) {
-      if (e.target.closest('button, input, textarea, .card-footer, .card-comment')) return;
-      clearTimeout(_cardClickTimers[id]);
-      _cardClickTimers[id] = setTimeout(() => toggleComment(id), 220);
-    }
-    function onCardDblClick(id, e) {
-      if (e.target.closest('button, input, textarea, .card-footer, .card-comment')) return;
-      clearTimeout(_cardClickTimers[id]);
-      editTitle(id);
-    }
+    // ── Comment modal ─────────────────────────────────────────────────────────
+    let _commentModalId = null;
 
-    // ── Comment panel ─────────────────────────────────────────────────────────
-    function toggleComment(id) {
-      if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
-      const panel = document.getElementById('comment-panel-' + id);
-      if (!panel) return;
-      panel.classList.toggle('open');
-      if (panel.classList.contains('open')) {
-        const ta = document.getElementById('comment-area-' + id);
-        if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
-      }
-    }
-
-    function saveComment(id) {
+    function openCommentModal(id) {
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
       const item = todos.find(t => t.id === id);
       if (!item) return;
-      const ta = document.getElementById('comment-area-' + id);
-      item.comment = ta ? ta.value.trim() : '';
-      persistState();
-      // Refresh just the comment actions (add/remove delete button) without full re-render
-      const panel = document.getElementById('comment-panel-' + id);
-      if (panel) {
-        const actions = panel.querySelector('.comment-actions');
-        if (actions) {
-          actions.innerHTML = `<button class="btn-comment-save" onclick="saveComment('${id}')">Save</button>` +
-            (item.comment ? `<span class="comment-del-tag" onclick="showCommentDelConfirm('${id}')">Delete note</span><span class="comment-del-confirm hidden" id="cdel-${id}">confirm? <button class="btn-yes" onclick="doDeleteComment('${id}')">✓</button><button class="btn-no" onclick="cancelCommentDelete('${id}')">×</button></span>` : '');
-        }
-      }
+      _commentModalId = id;
+      document.getElementById('commentModalTitle').textContent = item.text;
+      document.getElementById('commentModalArea').value = item.comment || '';
+      const delTag = document.getElementById('commentModalDelTag');
+      delTag.style.display = item.comment ? '' : 'none';
+      document.getElementById('commentModalDelConfirm').classList.add('hidden');
+      document.getElementById('commentModalOverlay').classList.remove('hidden');
+      setTimeout(() => document.getElementById('commentModalArea').focus(), 50);
     }
 
-    function showCommentDelConfirm(id) {
-      document.getElementById('cdel-' + id)?.classList.remove('hidden');
+    function closeCommentModal() {
+      document.getElementById('commentModalOverlay').classList.add('hidden');
+      _commentModalId = null;
     }
-    function cancelCommentDelete(id) {
-      document.getElementById('cdel-' + id)?.classList.add('hidden');
+
+    function saveCommentModal() {
+      if (!_commentModalId) return;
+      const item = todos.find(t => t.id === _commentModalId);
+      if (!item) return;
+      item.comment = document.getElementById('commentModalArea').value.trim();
+      persistState();
+      render();
+      document.getElementById('commentModalDelTag').style.display = item.comment ? '' : 'none';
+      document.getElementById('commentModalDelConfirm').classList.add('hidden');
     }
-    function doDeleteComment(id) {
-      if (!isConnected) return;
-      const item = todos.find(t => t.id === id);
+
+    function showCommentModalDelConfirm() {
+      document.getElementById('commentModalDelConfirm').classList.remove('hidden');
+    }
+    function cancelCommentModalDelete() {
+      document.getElementById('commentModalDelConfirm').classList.add('hidden');
+    }
+    function doDeleteCommentModal() {
+      if (!_commentModalId) return;
+      const item = todos.find(t => t.id === _commentModalId);
       if (!item) return;
       item.comment = '';
       persistState();
       render();
-      requestAnimationFrame(() => {
-        const panel = document.getElementById('comment-panel-' + id);
-        if (panel) panel.classList.add('open');
-      });
+      closeCommentModal();
     }
 
     function restoreItem(id) {
@@ -1128,12 +1176,22 @@
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
       const area = document.getElementById('dl-' + id);
       const item = todos.find(t => t.id === id);
-      const isoVal = (item && item.deadline) ? item.deadline : '';
-      area.innerHTML = `<input type="date" class="deadline-input" value="${isoVal}"
-        onclick="event.stopPropagation()"
-        onchange="saveDeadline('${id}', this.value)"
-        onblur="render()"
-        onkeydown="if(event.key==='Escape'||event.key==='Enter') this.blur()" />`;
+      const isoVal = (item && item.deadline) ? item.deadline : localDateISO();
+      const todayISO = localDateISO();
+      const tom = new Date(); tom.setDate(tom.getDate() + 1);
+      const tomorrowISO = localDateISO(tom);
+      area.innerHTML = `
+        <div class="dl-picker" onclick="event.stopPropagation()">
+          <div class="dl-quick">
+            <button class="dl-quick-btn" onclick="saveDeadline('${id}','${todayISO}')">Aujourd'hui</button>
+            <button class="dl-quick-btn" onclick="saveDeadline('${id}','${tomorrowISO}')">Demain</button>
+          </div>
+          <input type="date" class="deadline-input" value="${isoVal}"
+            onclick="event.stopPropagation()"
+            onchange="saveDeadline('${id}', this.value)"
+            onblur="render()"
+            onkeydown="if(event.key==='Escape'||event.key==='Enter') this.blur()" />
+        </div>`;
       area.querySelector('input').focus();
     }
 
@@ -1143,7 +1201,7 @@
       if (!item) return;
       item.deadline = value || null;
       persistState();
-      // render() will be called via onblur after onchange
+      render();
     }
 
     // ── Inline title editing ─────────────────────────────────────────────────
@@ -1310,6 +1368,7 @@
       const input = document.getElementById("cmdInput");
       const raw = input.value.trim();
       if (!raw) return;
+      document.getElementById('mentionPreview').innerHTML = '';
 
       const lower = raw.toLowerCase();
 
@@ -1435,6 +1494,11 @@
       if (e.key === 'Escape') {
         document.getElementById('datePickerPopup').classList.add('hidden');
       }
+    });
+
+    // Close modal on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeCommentModal();
     });
 
     // Close date picker on outside click
