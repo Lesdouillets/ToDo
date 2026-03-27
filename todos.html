@@ -546,11 +546,11 @@
       backdrop-filter: blur(14px);
       border: 1.5px solid #e5e7eb;
       border-radius: 20px;
-      padding: 12px 20px;
+      padding: 8px 14px;
       z-index: 100;
       box-shadow: 0 8px 32px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
     }
-    .cmd-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
+    .cmd-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 3px; }
     .cmd-hint {
       font-size: .68rem; color: var(--muted); font-weight: 500;
       display: none; padding: 0 4px;
@@ -571,7 +571,7 @@
     .cmd-send { font-family: var(--font); font-size: .82rem; font-weight: 600; padding: 10px 20px; border-radius: 999px; border: none; background: #6366f1; color: #fff; cursor: pointer; transition: background .15s; white-space: nowrap; }
     .cmd-send:hover { background: #4f46e5; }
     .cmd-send:active { background: #4338ca; }
-    .cmd-feedback { font-size: .72rem; font-weight: 500; padding: 0 4px; min-height: 16px; }
+    .cmd-feedback { font-size: .72rem; font-weight: 500; padding: 0 4px; min-height: 0; }
     .cmd-feedback.error { color: #ef4444; }
     .cmd-feedback.success { color: #22c55e; }
     .cmd-feedback.info { color: #3b82f6; }
@@ -1682,7 +1682,11 @@
       document.getElementById('taskModalMentionInput').value = '';
       document.getElementById('linkSearchInput').value = '';
       document.getElementById('linkDropdown').classList.add('hidden');
-      setLinkType('waiting_for');
+      // no pre-selection — user must explicitly choose a link type
+      document.getElementById('linkTypeBtnWaiting').classList.remove('active');
+      document.getElementById('linkTypeBtnBlocked').classList.remove('active');
+      document.getElementById('linkTypeBtnBlocks').classList.remove('active');
+      document.getElementById('linkTypeBtnRelated').classList.remove('active');
       document.getElementById('taskModalOverlay').classList.remove('hidden');
     }
 
@@ -1803,7 +1807,7 @@
     }
 
     // ── Task links ────────────────────────────────────────────────────────────
-    let _activeLinkType = 'waiting_for';
+    let _activeLinkType = null;
 
     function setLinkType(type) {
       _activeLinkType = type;
@@ -1894,8 +1898,7 @@
         html += reverseBlockers.map(t => {
           const isDone = t.done;
           return `<div class="task-modal-link-row${isDone ? ' archived' : ''}">
-            <span class="link-row-type" style="color:#dc2626;">⛔ Bloque cette tâche${isDone ? ' ✓' : ''}</span>
-            <span class="link-row-text">${escHtml(t.text)}</span>
+            <span class="link-row-text">${isDone ? '✓ ' : '⛔ '}${escHtml(t.text)}</span>
           </div>`;
         }).join('');
         html += '</div>';
@@ -1950,6 +1953,7 @@
 
     function addModalLink(targetId) {
       const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      if (!_activeLinkType) { setFeedback("Choisis d'abord un type de lien.", "error"); return; }
       if (!item.links) item.links = [];
       if (!item.links.find(l => l.id === targetId)) {
         item.links.push({ id: targetId, type: _activeLinkType });
