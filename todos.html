@@ -344,7 +344,46 @@
     }
     .btn-clear-done:hover { color: #ef4444; }
 
-    /* ── Mention live preview ── */
+    /* ── Task links ── */
+    .link-chip { font-size: .62rem; font-weight: 600; padding: 1px 6px; border-radius: 5px; white-space: nowrap; display: inline-flex; align-items: center; gap: 2px; }
+    .link-chip.waiting_for { background: #fff7ed; color: #ea580c; }
+    .link-chip.blocked_by  { background: #fef2f2; color: #dc2626; }
+    .link-chip.related_to  { background: #eff6ff; color: #6366f1; }
+    .task-modal-links { display: flex; flex-direction: column; gap: 5px; }
+    .task-modal-link-row { display: flex; align-items: center; gap: 7px; font-size: .78rem; padding: 5px 9px; border-radius: 7px; background: #f9fafb; border: 1px solid #f3f4f6; }
+    .link-row-type { font-size: .65rem; font-weight: 700; flex-shrink: 0; }
+    .link-row-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+    .link-row-remove { font-family: var(--font); font-size: .82rem; border: none; background: none; cursor: pointer; color: #d1d5db; padding: 0; flex-shrink: 0; line-height: 1; }
+    .link-row-remove:hover { color: #ef4444; }
+    .link-type-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .link-type-btn {
+      font-family: var(--font); font-size: .72rem; font-weight: 500;
+      padding: 3px 10px; border-radius: 6px; border: 1.5px solid #e5e7eb;
+      background: #fff; cursor: pointer; transition: all .12s;
+    }
+    .link-type-btn.waiting_for { color: #ea580c; }
+    .link-type-btn.waiting_for.active { background: #fff7ed; border-color: #fb923c; font-weight: 700; }
+    .link-type-btn.blocked_by  { color: #dc2626; }
+    .link-type-btn.blocked_by.active  { background: #fef2f2; border-color: #fca5a5; font-weight: 700; }
+    .link-type-btn.related_to  { color: #6366f1; }
+    .link-type-btn.related_to.active  { background: #eff6ff; border-color: #a5b4fc; font-weight: 700; }
+    .link-search-wrap { position: relative; }
+    .link-search-input {
+      font-family: var(--font); font-size: .8rem; padding: 5px 10px;
+      border: 1.5px solid #e5e7eb; border-radius: 7px; outline: none;
+      width: 100%; color: var(--text); background: #fff; transition: border-color .15s;
+    }
+    .link-search-input:focus { border-color: #6366f1; }
+    .link-search-input::placeholder { color: #c4c9d4; }
+    .link-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 10;
+      background: #fff; border: 1.5px solid #e5e7eb; border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.1); max-height: 180px; overflow-y: auto;
+    }
+    .link-dropdown.hidden { display: none; }
+    .link-dropdown-item { padding: 7px 12px; font-size: .8rem; cursor: pointer; color: var(--text); display: flex; align-items: center; gap: 7px; transition: background .1s; }
+    .link-dropdown-item:hover { background: #f9fafb; }
+    .link-item-badge { font-size: .6rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; color: #fff; flex-shrink: 0; }
     .mention-preview { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; padding: 0 4px; }
     .mention-preview-chip {
       font-size: .68rem; font-weight: 600; padding: 2px 8px; border-radius: 5px;
@@ -568,6 +607,25 @@
         <div class="task-modal-deadline-row" id="taskModalDeadline"></div>
       </div>
       <div class="task-modal-section">
+        <div class="task-modal-label">Dépendances</div>
+        <div class="task-modal-links" id="taskModalLinks"></div>
+        <div class="link-type-row">
+          <button class="link-type-btn waiting_for active" id="linkTypeBtnWaiting" onclick="setLinkType('waiting_for')">⏳ Attend</button>
+          <button class="link-type-btn blocked_by"         id="linkTypeBtnBlocked" onclick="setLinkType('blocked_by')">🔒 Bloqué par</button>
+          <button class="link-type-btn related_to"         id="linkTypeBtnRelated" onclick="setLinkType('related_to')">→ Lié à</button>
+        </div>
+        <div class="link-search-wrap">
+          <input type="text" class="link-search-input" id="linkSearchInput"
+                 placeholder="Rechercher une tâche…"
+                 oninput="onLinkSearch(this.value)"
+                 onfocus="onLinkSearch(this.value)"
+                 onblur="hideLinkDropdown()"
+                 autocomplete="off" />
+          <div class="link-dropdown hidden" id="linkDropdown"></div>
+        </div>
+      </div>
+
+      <div class="task-modal-section">
         <div class="task-modal-label">Commentaires</div>
         <div class="task-modal-comments-list" id="taskModalComments"></div>
         <div class="task-modal-add">
@@ -721,6 +779,12 @@
       NN: { label: "Eliminate", accent: "#6b7280" },
     };
 
+    const LINK_TYPES = {
+      waiting_for: { label: 'Attend',     icon: '⏳', color: '#ea580c' },
+      blocked_by:  { label: 'Bloqué par', icon: '🔒', color: '#dc2626' },
+      related_to:  { label: 'Lié à',      icon: '→',  color: '#6366f1' },
+    };
+
     // ── Connection UI ────────────────────────────────────────────────────────
     function updateConnectionUI() {
       const status = document.getElementById("connStatus");
@@ -866,6 +930,7 @@
                   <p class="todo-text">${item.text}</p>
                   ${renderDepChips(item.dependency)}
                   ${renderMentionChips(item.mentions, item.id)}
+                  ${renderLinkChips(item.links)}
                 </div>
                 <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
               </div>
@@ -1043,9 +1108,13 @@
          <span class="task-modal-created">created ${fmtDate(item.createdAt)}</span>`;
       renderModalMentions(item);
       renderModalDeadline(item);
+      renderModalLinks(item);
       renderModalComments(item);
       document.getElementById('taskModalNewComment').value = '';
       document.getElementById('taskModalMentionInput').value = '';
+      document.getElementById('linkSearchInput').value = '';
+      document.getElementById('linkDropdown').classList.add('hidden');
+      setLinkType('waiting_for');
       document.getElementById('taskModalOverlay').classList.remove('hidden');
     }
 
@@ -1163,6 +1232,84 @@
 
     function escHtml(s) {
       return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ── Task links ────────────────────────────────────────────────────────────
+    let _activeLinkType = 'waiting_for';
+
+    function setLinkType(type) {
+      _activeLinkType = type;
+      document.getElementById('linkTypeBtnWaiting').classList.toggle('active', type === 'waiting_for');
+      document.getElementById('linkTypeBtnBlocked').classList.toggle('active', type === 'blocked_by');
+      document.getElementById('linkTypeBtnRelated').classList.toggle('active', type === 'related_to');
+    }
+
+    function renderLinkChips(links) {
+      if (!links || !links.length) return '';
+      const chips = links.map(l => {
+        const target = todos.find(t => t.id === l.id);
+        if (!target) return '';
+        const lt = LINK_TYPES[l.type] || LINK_TYPES.related_to;
+        const short = target.text.length > 22 ? target.text.slice(0, 22) + '…' : target.text;
+        return `<span class="link-chip ${l.type}">${lt.icon} ${escHtml(short)}</span>`;
+      }).filter(Boolean).join('');
+      return chips ? `<div class="dep-chips">${chips}</div>` : '';
+    }
+
+    function renderModalLinks(item) {
+      const links = item.links || [];
+      const container = document.getElementById('taskModalLinks');
+      if (!links.length) { container.innerHTML = ''; return; }
+      container.innerHTML = links.map(l => {
+        const target = todos.find(t => t.id === l.id);
+        const lt = LINK_TYPES[l.type] || LINK_TYPES.related_to;
+        const text = target ? target.text : '(tâche supprimée)';
+        return `<div class="task-modal-link-row">
+          <span class="link-row-type" style="color:${lt.color};">${lt.icon} ${lt.label}</span>
+          <span class="link-row-text">${escHtml(text)}</span>
+          <button class="link-row-remove" onclick="removeModalLink('${l.id}')">×</button>
+        </div>`;
+      }).join('');
+    }
+
+    function removeModalLink(targetId) {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      item.links = (item.links || []).filter(l => l.id !== targetId);
+      persistState(); render(); renderModalLinks(item);
+    }
+
+    function onLinkSearch(query) {
+      const dropdown = document.getElementById('linkDropdown');
+      if (!query.trim()) { dropdown.classList.add('hidden'); return; }
+      const item = todos.find(t => t.id === _taskModalId);
+      const excluded = new Set((item?.links || []).map(l => l.id));
+      excluded.add(_taskModalId);
+      const q = query.toLowerCase();
+      const matches = todos.filter(t => !t.done && !excluded.has(t.id) && t.text.toLowerCase().includes(q)).slice(0, 6);
+      if (!matches.length) { dropdown.classList.add('hidden'); return; }
+      dropdown.innerHTML = matches.map(t => {
+        const qm = QUADRANT_META[t.quadrant] || QUADRANT_META.NN;
+        return `<div class="link-dropdown-item" onmousedown="addModalLink('${t.id}')">
+          <span class="link-item-badge" style="background:${qm.accent};">${qm.label}</span>
+          ${escHtml(t.text)}
+        </div>`;
+      }).join('');
+      dropdown.classList.remove('hidden');
+    }
+
+    function hideLinkDropdown() {
+      setTimeout(() => document.getElementById('linkDropdown')?.classList.add('hidden'), 150);
+    }
+
+    function addModalLink(targetId) {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      if (!item.links) item.links = [];
+      if (!item.links.find(l => l.id === targetId)) {
+        item.links.push({ id: targetId, type: _activeLinkType });
+      }
+      document.getElementById('linkSearchInput').value = '';
+      document.getElementById('linkDropdown').classList.add('hidden');
+      persistState(); render(); renderModalLinks(item);
     }
 
     function clearDone() {
@@ -1466,6 +1613,7 @@
           delete t.comment;
           changed = true;
         }
+        if (!('links' in t)) { t.links = []; changed = true; }
       });
       if (changed) {
         localStorage.setItem(LS_KEY, JSON.stringify(todos));
