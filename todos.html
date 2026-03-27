@@ -213,20 +213,15 @@
     .delete-tag:hover { color: #ef4444; }
     .delete-confirm {
       display: inline-flex; align-items: center; gap: 4px;
-      font-size: .62rem; color: #9ca3af;
+      font-size: .65rem; font-weight: 600; color: #9ca3af;
     }
     .delete-confirm.hidden { display: none; }
     .delete-confirm .btn-yes {
-      font-family: var(--font); font-size: .62rem; font-weight: 700;
+      font-family: var(--font); font-size: .65rem; font-weight: 700;
       border: none; border-radius: 3px; cursor: pointer; padding: 1px 6px;
       background: #ef4444; color: #fff;
     }
     .delete-confirm .btn-yes:hover { background: #dc2626; }
-    .delete-confirm .btn-no {
-      font-family: var(--font); font-size: .62rem;
-      border: none; background: none; cursor: pointer; color: #c4c9d4; padding: 0 2px;
-    }
-    .delete-confirm .btn-no:hover { color: #6b7280; }
     body.locked .delete-tag { opacity: .3; cursor: not-allowed; pointer-events: none; }
 
     /* ── Comment modal ── */
@@ -277,15 +272,30 @@
     .comment-badge:hover { color: #6366f1; }
     .comment-badge.has-comment { color: #6366f1; font-weight: 600; }
 
-    /* ── Deadline quick picker ── */
-    .dl-picker { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-    .dl-quick { display: flex; gap: 4px; }
-    .dl-quick-btn {
-      font-family: var(--font); font-size: .62rem; font-weight: 600;
-      padding: 2px 7px; border-radius: 5px; border: none;
-      background: #eff6ff; color: #3b82f6; cursor: pointer; transition: background .1s;
+    /* ── Deadline quick picker (aligned with command bar date picker) ── */
+    .dl-picker {
+      background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 6px; box-shadow: 0 4px 16px rgba(0,0,0,.1);
+      display: flex; flex-direction: column; gap: 4px; min-width: 150px;
     }
-    .dl-quick-btn:hover { background: #dbeafe; }
+    .dl-quick { display: flex; flex-direction: column; gap: 0; }
+    .dl-quick-btn {
+      font-family: var(--font); font-size: .82rem; font-weight: 500;
+      padding: 6px 12px; border-radius: 7px; border: none;
+      background: #f9fafb; color: var(--text); cursor: pointer; text-align: left;
+      transition: background .1s;
+    }
+    .dl-quick-btn:hover { background: #eff6ff; color: #6366f1; }
+
+    /* ── Recently done clear ── */
+    .done-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .done-header h3 { margin-bottom: 0; }
+    .btn-clear-done {
+      font-family: var(--font); font-size: .62rem; font-weight: 500;
+      color: #d1d5db; background: none; border: none; cursor: pointer; padding: 0;
+      transition: color .15s;
+    }
+    .btn-clear-done:hover { color: #ef4444; }
 
     /* ── Mention live preview ── */
     .mention-preview { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; padding: 0 4px; }
@@ -332,7 +342,7 @@
 
     /* ── Recently Done ── */
     .recently-done { max-width: 1100px; margin: 28px auto 0; }
-    .recently-done h3 { font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 10px; }
+    .recently-done h3 { font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
     .done-list { display: flex; flex-direction: column; gap: 6px; }
     .done-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 9px 14px; display: flex; align-items: center; gap: 10px; }
     @keyframes doneSlideIn {
@@ -479,7 +489,10 @@
   </main>
 
   <section class="recently-done" id="recentlyDone" style="display:none;">
-    <h3>Recently done</h3>
+    <div class="done-header">
+      <h3>Recently done</h3>
+      <button class="btn-clear-done" onclick="clearDone()">clear all</button>
+    </div>
     <div class="done-list" id="doneList"></div>
   </section>
 
@@ -595,7 +608,8 @@
           if (r.ok) {
             const meta = await r.json();
             localStorage.setItem(LS_SHA_KEY, meta.sha);
-            const data = JSON.parse(atob(meta.content.replace(/\n/g, '')));
+            const decoded = decodeURIComponent(escape(atob(meta.content.replace(/\n/g, ''))));
+            const data = JSON.parse(decoded);
             todos = data.todos || [];
             localStorage.setItem(LS_KEY, JSON.stringify(todos));
             localStorage.setItem(LS_GEN_KEY, new Date().toISOString());
@@ -794,17 +808,16 @@
               </div>
             </div>
             <div class="card-footer">
-              <span class="delete-tag" onclick="showDeleteConfirm('${item.id}')">Delete</span>
+              <span class="delete-tag" id="del-tag-${item.id}" onclick="showDeleteConfirm('${item.id}')">Delete</span>
               <div class="delete-confirm hidden" id="del-confirm-${item.id}">
                 confirm?
                 <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
-                <button class="btn-no"  onclick="cancelDelete('${item.id}')">×</button>
               </div>
               <button class="comment-badge${item.comment ? ' has-comment' : ''}" onclick="openCommentModal('${item.id}')" title="Note">
                 <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
                 ${commentCount}
               </button>
-              <span class="meta-date" style="margin-left:auto;">${fmtDate(item.createdAt)}</span>
+              <span class="meta-date" style="margin-left:auto;">created ${fmtDate(item.createdAt)}</span>
             </div>
           </div>`;
         }).join("");
@@ -921,10 +934,18 @@
     }
 
     function showDeleteConfirm(id) {
-      document.getElementById('del-confirm-' + id).classList.remove('hidden');
+      // Close any other open confirms
+      document.querySelectorAll('.delete-confirm:not(.hidden)').forEach(el => {
+        el.classList.add('hidden');
+        const oid = el.id.replace('del-confirm-', '');
+        document.getElementById('del-tag-' + oid)?.classList.remove('hidden');
+      });
+      document.getElementById('del-tag-' + id)?.classList.add('hidden');
+      document.getElementById('del-confirm-' + id)?.classList.remove('hidden');
     }
     function cancelDelete(id) {
-      document.getElementById('del-confirm-' + id).classList.add('hidden');
+      document.getElementById('del-confirm-' + id)?.classList.add('hidden');
+      document.getElementById('del-tag-' + id)?.classList.remove('hidden');
     }
     function confirmDelete(id) {
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
@@ -980,6 +1001,13 @@
       persistState();
       render();
       closeCommentModal();
+    }
+
+    function clearDone() {
+      if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
+      todos = todos.filter(t => !t.done);
+      render();
+      persistState();
     }
 
     function restoreItem(id) {
@@ -1186,7 +1214,8 @@
             <button class="dl-quick-btn" onclick="saveDeadline('${id}','${todayISO}')">Aujourd'hui</button>
             <button class="dl-quick-btn" onclick="saveDeadline('${id}','${tomorrowISO}')">Demain</button>
           </div>
-          <input type="date" class="deadline-input" value="${isoVal}"
+          <div class="dp-separator"></div>
+          <input type="date" class="dp-custom" value="${isoVal}"
             onclick="event.stopPropagation()"
             onchange="saveDeadline('${id}', this.value)"
             onblur="render()"
@@ -1501,13 +1530,22 @@
       if (e.key === 'Escape') closeCommentModal();
     });
 
-    // Close date picker on outside click
+    // Close date picker and delete confirms on outside click
     document.addEventListener('click', function(e) {
+      // Date picker
       const popup = document.getElementById('datePickerPopup');
       if (!popup.classList.contains('hidden') &&
           !popup.contains(e.target) &&
           e.target.id !== 'cmdInput') {
         popup.classList.add('hidden');
+      }
+      // Delete confirms
+      if (!e.target.closest('.delete-confirm') && !e.target.classList.contains('delete-tag')) {
+        document.querySelectorAll('.delete-confirm:not(.hidden)').forEach(el => {
+          el.classList.add('hidden');
+          const id = el.id.replace('del-confirm-', '');
+          document.getElementById('del-tag-' + id)?.classList.remove('hidden');
+        });
       }
     });
   </script>
