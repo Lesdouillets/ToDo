@@ -63,7 +63,12 @@
           "createdAt": "2026-03-27T19:35:53.292Z"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "id": "9b66e27f-d4f0-4777-a5fa-7cd35d97a5b9",
+          "type": "blocks"
+        }
+      ]
     }
   ]
 }
