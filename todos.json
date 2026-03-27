@@ -2,7 +2,7 @@
   "todos": [
     {
       "id": "9b66e27f-d4f0-4777-a5fa-7cd35d97a5b9",
-      "text": "Préparer présentation sur les Bons Plans, se synchroniser avec Damien F",
+      "text": "PrÃ©parer prÃ©sentation sur les Bons Plans, se synchroniser avec Damien F",
       "quadrant": "IN",
       "important": true,
       "urgent": false,
@@ -11,7 +11,8 @@
       "mentions": [],
       "createdAt": "2026-03-25T09:25:07.856Z",
       "done": false,
-      "completedAt": null
+      "completedAt": null,
+      "comment": "test"
     },
     {
       "id": "6dcca120-b510-4ebe-bb9f-d7db0a083c70",
@@ -30,7 +31,7 @@
     },
     {
       "id": "0d41bdbc-f7a3-4429-bbab-2f0d600451f1",
-      "text": "Voir avec Chloé pour l'ajout de la Banner Wrapped World Cup",
+      "text": "Voir avec ChloÃ© pour l'ajout de la Banner Wrapped World Cup",
       "quadrant": "IU",
       "important": true,
       "urgent": true,
@@ -44,7 +45,7 @@
     },
     {
       "id": "a15779da-4145-42c9-beeb-b33d74b2899d",
-      "text": "Répondre à Rémi concernant le wording de la fin de l'XP Si La France Gagne Je",
+      "text": "RÃ©pondre Ã  RÃ©mi concernant le wording de la fin de l'XP Si La France Gagne Je",
       "quadrant": "IU",
       "important": true,
       "urgent": true,
