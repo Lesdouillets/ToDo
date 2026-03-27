@@ -8,7 +8,9 @@
       "urgent": false,
       "dependency": null,
       "deadline": null,
-      "mentions": [],
+      "mentions": [
+        "Damien F"
+      ],
       "createdAt": "2026-03-25T09:25:07.856Z",
       "done": false,
       "completedAt": null,
