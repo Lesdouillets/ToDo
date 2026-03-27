@@ -349,6 +349,15 @@
     .link-chip.waiting_for { background: #fff7ed; color: #ea580c; }
     .link-chip.blocked_by  { background: #fef2f2; color: #dc2626; }
     .link-chip.related_to  { background: #eff6ff; color: #6366f1; }
+    .link-chip.blocks      { background: #fef2f2; color: #dc2626; }
+    .link-badge { display: inline-flex; align-items: center; gap: 3px; font-size: .65rem; color: #6b7280; background: transparent; border: none; cursor: pointer; padding: 0; }
+    .link-badge.is-blocked { color: #dc2626; font-weight: 600; }
+    .link-badge.has-link   { color: #6366f1; }
+    .modal-archived-links { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e5e7eb; }
+    .modal-archived-label { font-size: .62rem; color: #9ca3af; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .05em; }
+    .modal-reverse-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f3f4f6; }
+    .modal-reverse-label { font-size: .62rem; color: #9ca3af; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .05em; }
+    .task-modal-link-row.archived { opacity: .5; }
     .task-modal-links { display: flex; flex-direction: column; gap: 5px; }
     .task-modal-link-row { display: flex; align-items: center; gap: 7px; font-size: .78rem; padding: 5px 9px; border-radius: 7px; background: #f9fafb; border: 1px solid #f3f4f6; }
     .link-row-type { font-size: .65rem; font-weight: 700; flex-shrink: 0; }
@@ -367,6 +376,8 @@
     .link-type-btn.blocked_by.active  { background: #fef2f2; border-color: #fca5a5; font-weight: 700; }
     .link-type-btn.related_to  { color: #6366f1; }
     .link-type-btn.related_to.active  { background: #eff6ff; border-color: #a5b4fc; font-weight: 700; }
+    .link-type-btn.blocks      { color: #dc2626; }
+    .link-type-btn.blocks.active      { background: #fef2f2; border-color: #fca5a5; font-weight: 700; }
     .link-search-wrap { position: relative; }
     .link-search-input {
       font-family: var(--font); font-size: .8rem; padding: 5px 10px;
@@ -406,7 +417,7 @@
 
     /* ── Date picker popup ── */
     .date-picker-popup {
-      position: fixed; bottom: calc(var(--bar-h) + 16px); left: 50%; transform: translateX(-50%);
+      position: fixed; bottom: calc(var(--bar-h) + 36px); left: 50%; transform: translateX(-50%);
       background: #fff; border: 1.5px solid #e5e7eb; border-radius: 10px;
       padding: 8px; box-shadow: 0 4px 24px rgba(0,0,0,.12);
       display: flex; flex-direction: column; gap: 5px;
@@ -460,13 +471,15 @@
 
     /* ── Command bar ── */
     .cmd-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(255,255,255,.95);
-      backdrop-filter: blur(10px);
-      border-top: 1.5px solid #e5e7eb;
-      padding: 12px 24px;
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 48px); max-width: 780px;
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(14px);
+      border: 1.5px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 12px 20px;
       z-index: 100;
-      box-shadow: 0 -4px 24px rgba(0,0,0,.07);
+      box-shadow: 0 8px 32px rgba(0,0,0,.12), 0 2px 8px rgba(0,0,0,.06);
     }
     .cmd-bar-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 6px; }
     .cmd-hint {
@@ -478,7 +491,7 @@
     .cmd-hint strong { color: #6366f1; }
     .cmd-row { display: flex; gap: 8px; align-items: center; }
     .cmd-input {
-      flex: 1; font-family: var(--font); font-size: .9rem; font-weight: 500;
+      flex: 1; font-family: var(--font); font-size: .9rem; font-weight: 400;
       padding: 10px 16px; border-radius: 999px;
       border: 1.5px solid #d1d5db; outline: none;
       background: #f9fafb; color: var(--text);
@@ -594,9 +607,6 @@
     <div class="done-list" id="doneList"></div>
   </section>
 
-  <footer class="page-footer">
-    Eisenhower Matrix · Drag cards between quadrants · Maxime's marvelous todolist
-  </footer>
 
   <!-- Task detail modal -->
   <div class="task-modal-overlay hidden" id="taskModalOverlay" onclick="closeTaskModal()">
@@ -624,6 +634,7 @@
         <div class="link-type-row">
           <button class="link-type-btn waiting_for active" id="linkTypeBtnWaiting" onclick="setLinkType('waiting_for')">⏳ Attend</button>
           <button class="link-type-btn blocked_by"         id="linkTypeBtnBlocked" onclick="setLinkType('blocked_by')">🔒 Bloqué par</button>
+          <button class="link-type-btn blocks"             id="linkTypeBtnBlocks"  onclick="setLinkType('blocks')">⛔ Bloque</button>
           <button class="link-type-btn related_to"         id="linkTypeBtnRelated" onclick="setLinkType('related_to')">→ Lié à</button>
         </div>
         <div class="link-search-wrap">
@@ -798,6 +809,7 @@
     const LINK_TYPES = {
       waiting_for: { label: 'Attend',     icon: '⏳', color: '#ea580c' },
       blocked_by:  { label: 'Bloqué par', icon: '🔒', color: '#dc2626' },
+      blocks:      { label: 'Bloque',     icon: '⛔', color: '#dc2626' },
       related_to:  { label: 'Lié à',      icon: '→',  color: '#6366f1' },
     };
 
@@ -946,7 +958,6 @@
                   <p class="todo-text">${item.text}</p>
                   ${renderDepChips(item.dependency)}
                   ${renderMentionChips(item.mentions, item.id)}
-                  ${renderLinkChips(item.links)}
                 </div>
                 <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
               </div>
@@ -957,6 +968,7 @@
                 confirm?
                 <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
               </div>
+              ${renderLinksCardBadge(item)}
               <button class="comment-badge${commentCount ? ' has-comment' : ''}" onclick="openTaskModal('${item.id}')" title="Détail">
                 <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
                 ${commentCount}
@@ -1257,35 +1269,114 @@
       _activeLinkType = type;
       document.getElementById('linkTypeBtnWaiting').classList.toggle('active', type === 'waiting_for');
       document.getElementById('linkTypeBtnBlocked').classList.toggle('active', type === 'blocked_by');
+      document.getElementById('linkTypeBtnBlocks').classList.toggle('active',  type === 'blocks');
       document.getElementById('linkTypeBtnRelated').classList.toggle('active', type === 'related_to');
     }
 
-    function renderLinkChips(links) {
-      if (!links || !links.length) return '';
-      const chips = links.map(l => {
-        const target = todos.find(t => t.id === l.id);
-        if (!target) return '';
-        const lt = LINK_TYPES[l.type] || LINK_TYPES.related_to;
-        const short = target.text.length > 22 ? target.text.slice(0, 22) + '…' : target.text;
-        return `<span class="link-chip ${l.type}">${lt.icon} ${escHtml(short)}</span>`;
-      }).filter(Boolean).join('');
-      return chips ? `<div class="dep-chips">${chips}</div>` : '';
+    // Chips no longer rendered on card — replaced by icon badge in card footer
+    function renderLinkChips(links) { return ''; }
+
+    // Compute active blockers for an item:
+    // - own blocked_by links where target is not done
+    // - reverse: tasks with type=blocks pointing to this item, not done
+    function getActiveBlockers(item) {
+      const result = [];
+      (item.links || []).forEach(l => {
+        if (l.type === 'blocked_by') {
+          const t = todos.find(x => x.id === l.id);
+          if (t && !t.done) result.push({ task: t, linkId: l.id, reverse: false });
+        }
+      });
+      todos.forEach(t => {
+        if (t.id === item.id || t.done) return;
+        (t.links || []).forEach(l => {
+          if (l.type === 'blocks' && l.id === item.id) result.push({ task: t, linkId: t.id, reverse: true });
+        });
+      });
+      return result;
+    }
+
+    // Count all active links for the badge (non-done targets)
+    function countActiveLinks(item) {
+      const blockers = getActiveBlockers(item);
+      const others = (item.links || []).filter(l => {
+        if (l.type === 'blocked_by' || l.type === 'blocks') return false;
+        const t = todos.find(x => x.id === l.id);
+        return t && !t.done;
+      });
+      return { blocked: blockers.length, other: others.length };
+    }
+
+    function renderLinksCardBadge(item) {
+      const { blocked, other } = countActiveLinks(item);
+      const total = blocked + other;
+      if (!total) return '';
+      const cls = blocked ? 'link-badge is-blocked' : 'link-badge has-link';
+      const icon = blocked
+        ? `<svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>`
+        : `<svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/></svg>`;
+      return `<button class="${cls}" onclick="openTaskModal('${item.id}')" title="Liens">${icon}${total}</button>`;
     }
 
     function renderModalLinks(item) {
-      const links = item.links || [];
       const container = document.getElementById('taskModalLinks');
-      if (!links.length) { container.innerHTML = ''; return; }
-      container.innerHTML = links.map(l => {
-        const target = todos.find(t => t.id === l.id);
-        const lt = LINK_TYPES[l.type] || LINK_TYPES.related_to;
-        const text = target ? target.text : '(tâche supprimée)';
-        return `<div class="task-modal-link-row">
-          <span class="link-row-type" style="color:${lt.color};">${lt.icon} ${lt.label}</span>
-          <span class="link-row-text">${escHtml(text)}</span>
-          <button class="link-row-remove" onclick="removeModalLink('${l.id}')">×</button>
-        </div>`;
-      }).join('');
+      const links = item.links || [];
+
+      // Active own links
+      const activeLinks = links.filter(l => {
+        const t = todos.find(x => x.id === l.id);
+        return t && !t.done;
+      });
+      // Archived own links (target done or deleted)
+      const archivedLinks = links.filter(l => {
+        const t = todos.find(x => x.id === l.id);
+        return !t || t.done;
+      });
+      // Reverse: tasks that block this item (type=blocks → item)
+      const reverseBlockers = todos.filter(t => t.id !== item.id && (t.links || []).some(l => l.type === 'blocks' && l.id === item.id));
+
+      let html = '';
+
+      if (activeLinks.length) {
+        html += activeLinks.map(l => {
+          const target = todos.find(t => t.id === l.id);
+          const lt = LINK_TYPES[l.type] || LINK_TYPES.related_to;
+          return `<div class="task-modal-link-row">
+            <span class="link-row-type" style="color:${lt.color};">${lt.icon} ${lt.label}</span>
+            <span class="link-row-text">${escHtml(target.text)}</span>
+            <button class="link-row-remove" onclick="removeModalLink('${l.id}')">×</button>
+          </div>`;
+        }).join('');
+      }
+
+      if (reverseBlockers.length) {
+        html += `<div class="modal-reverse-section"><div class="modal-reverse-label">Bloqué par</div>`;
+        html += reverseBlockers.map(t => {
+          const isDone = t.done;
+          return `<div class="task-modal-link-row${isDone ? ' archived' : ''}">
+            <span class="link-row-type" style="color:#dc2626;">⛔ Bloque cette tâche${isDone ? ' ✓' : ''}</span>
+            <span class="link-row-text">${escHtml(t.text)}</span>
+          </div>`;
+        }).join('');
+        html += '</div>';
+      }
+
+      if (archivedLinks.length) {
+        html += `<div class="modal-archived-links"><div class="modal-archived-label">Archivé</div>`;
+        html += archivedLinks.map(l => {
+          const target = todos.find(t => t.id === l.id);
+          const lt = LINK_TYPES[l.type] || LINK_TYPES.related_to;
+          const text = target ? target.text : '(tâche supprimée)';
+          return `<div class="task-modal-link-row archived">
+            <span class="link-row-type" style="color:${lt.color};">${lt.icon} ${lt.label}</span>
+            <span class="link-row-text">${escHtml(text)}</span>
+            <button class="link-row-remove" onclick="removeModalLink('${l.id}')">×</button>
+          </div>`;
+        }).join('');
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
     }
 
     function removeModalLink(targetId) {
