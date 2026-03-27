@@ -60,7 +60,14 @@
       "mentions": [],
       "createdAt": "2026-03-27T19:33:48.925Z",
       "done": false,
-      "completedAt": null
+      "completedAt": null,
+      "comments": [
+        {
+          "id": "fb46b920-8d5a-4105-8872-dd3f2443260e",
+          "text": "Demande Martin : \n- Qu'est ce qu'on a buildé comme solution in fine ?\n- Comment ça va s'opérer ?\n- Les éventuelles limites\n- Le plan de rollout par pays",
+          "createdAt": "2026-03-27T19:35:53.292Z"
+        }
+      ]
     }
   ]
 }
