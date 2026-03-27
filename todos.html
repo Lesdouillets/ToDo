@@ -1218,6 +1218,7 @@
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
       const item = todos.find(t => t.id === id);
       if (!item) return;
+      haptic(35);
       item.done = true;
       item.completedAt = new Date().toISOString();
       render();
@@ -2057,11 +2058,95 @@
       setPendingDeadline(isoVal, formatDeadlineDisplay(isoVal));
     }
 
+    // ── Mobile: haptic ───────────────────────────────────────────────────────
+    function haptic(ms) { if (navigator.vibrate) navigator.vibrate(ms || 30); }
+
+    // ── Mobile: swipe cards ──────────────────────────────────────────────────
+    let _touchStartX = 0, _touchStartY = 0, _touchCardEl = null, _touchLongTimer = null;
+
+    function cardTouchStart(e, id) {
+      _touchStartX = e.touches[0].clientX;
+      _touchStartY = e.touches[0].clientY;
+      _touchCardEl = e.currentTarget;
+      _touchLongTimer = setTimeout(() => {
+        _touchCardEl = null;
+        showMoveMenu(id);
+      }, 550);
+    }
+
+    function cardTouchMove(e) {
+      clearTimeout(_touchLongTimer);
+      if (!_touchCardEl) return;
+      const dx = e.touches[0].clientX - _touchStartX;
+      const dy = Math.abs(e.touches[0].clientY - _touchStartY);
+      if (Math.abs(dx) > 16 && dy < 40) {
+        _touchCardEl.classList.toggle('swipe-right', dx > 0);
+        _touchCardEl.classList.toggle('swipe-left',  dx < 0);
+      }
+    }
+
+    function cardTouchEnd(e, id) {
+      clearTimeout(_touchLongTimer);
+      const el = _touchCardEl;
+      _touchCardEl = null;
+      if (!el) return;
+      el.classList.remove('swipe-right', 'swipe-left');
+      const dx = e.changedTouches[0].clientX - _touchStartX;
+      const dy = Math.abs(e.changedTouches[0].clientY - _touchStartY);
+      if (Math.abs(dx) > 72 && dy < 50) {
+        if (dx > 0) { haptic(35); markDone(id); }
+        else        { haptic(20); showDeleteConfirm(id); }
+      }
+    }
+
+    // ── Mobile: move-to menu ─────────────────────────────────────────────────
+    let _moveMenuId = null;
+
+    function showMoveMenu(id) {
+      haptic(45);
+      _moveMenuId = id;
+      document.getElementById('moveMenuOverlay').classList.remove('hidden');
+    }
+
+    function closeMoveMenu() {
+      document.getElementById('moveMenuOverlay').classList.add('hidden');
+      _moveMenuId = null;
+    }
+
+    function moveTaskTo(quadrant) {
+      if (!_moveMenuId || !isConnected) { closeMoveMenu(); if (!isConnected) setFeedback("Connect first.", "error"); return; }
+      const item = todos.find(t => t.id === _moveMenuId);
+      if (item) { item.quadrant = quadrant; render(); persistState(); }
+      closeMoveMenu();
+    }
+
+    // ── Mobile: tab navigation ───────────────────────────────────────────────
+    function scrollToQuadrant(q) {
+      const el = document.querySelector(`[data-quadrant="${q}"]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveTab(q);
+    }
+
+    function setActiveTab(q) {
+      document.querySelectorAll('.mtab').forEach(t => t.classList.toggle('active', t.dataset.q === q));
+    }
+
+    function initTabObserver() {
+      if (window.innerWidth > 680) return;
+      const obs = new IntersectionObserver(entries => {
+        let best = null, bestRatio = 0;
+        entries.forEach(e => { if (e.intersectionRatio > bestRatio) { bestRatio = e.intersectionRatio; best = e.target; } });
+        if (best) setActiveTab(best.dataset.quadrant);
+      }, { threshold: [0.2, 0.5] });
+      document.querySelectorAll('.quadrant').forEach(q => obs.observe(q));
+    }
+
     // ── Init ────────────────────────────────────────────────────────────────
     migrateDeadlines(); // populate deadline field from text for legacy items
     updateConnectionUI(); // start locked
     tryAutoConnect();    // silently reconnect if handle + permission already available
     render();
+    initTabObserver();
     setTimeout(() => location.reload(), 600_000); // auto-refresh every 10 min
 
     // @ mention live preview
