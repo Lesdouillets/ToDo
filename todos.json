@@ -29,6 +29,19 @@
       "createdAt": "2026-03-27T18:38:37.675Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "7d0929f1-1d30-4406-a7bc-5ff8c93025bd",
+      "text": "Préparer Deck pour le DECIDE de Know Where The Action Is 10/04",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": "2026-04-10",
+      "mentions": [],
+      "createdAt": "2026-03-27T19:03:32.356Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
