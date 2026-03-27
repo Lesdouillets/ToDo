@@ -392,6 +392,18 @@
     }
     @keyframes chipPop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
+    /* ── Command bar date tag ── */
+    .cmd-date-tag {
+      display: none; align-items: center; gap: 5px;
+      font-family: var(--font); font-size: .72rem; font-weight: 600;
+      padding: 4px 10px; border-radius: 999px;
+      background: #eff6ff; color: #3b82f6; border: 1.5px solid #bfdbfe;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .cmd-date-tag.visible { display: inline-flex; align-items: center; }
+    .cmd-date-tag-remove { background: none; border: none; cursor: pointer; color: #93c5fd; padding: 0; font-size: .9rem; line-height: 1; }
+    .cmd-date-tag-remove:hover { color: #2563eb; }
+
     /* ── Date picker popup ── */
     .date-picker-popup {
       position: fixed; bottom: calc(var(--bar-h) + 16px); left: 50%; transform: translateX(-50%);
@@ -657,6 +669,10 @@
                placeholder="IU Finish roadmap deck   ·   important urgent Finish roadmap deck   ·   remove velocity"
                onfocus="showHint()" onblur="hideHint()"
                onkeydown="if(event.key==='Enter') runCommand()" />
+        <span class="cmd-date-tag" id="cmdDateTag">
+          <span id="cmdDateTagLabel"></span>
+          <button class="cmd-date-tag-remove" onclick="clearPendingDeadline()">×</button>
+        </span>
         <button class="cmd-send" id="cmdSend" onclick="runCommand()">Send</button>
       </div>
       <div class="cmd-feedback" id="cmdFeedback"></div>
@@ -1740,7 +1756,8 @@
       }
       const { prefix, taskText } = parsed;
       const dependency = parseDependency(taskText);
-      let deadline = parseDeadlineFromText(taskText);
+      // Use explicit date tag if set, otherwise parse from text (legacy support)
+      let deadline = _pendingDeadline || parseDeadlineFromText(taskText);
       // IU items default to tomorrow if no deadline is given
       if (!deadline && prefix === "IU") {
         const tomorrow = new Date();
@@ -1748,7 +1765,8 @@
         deadline = localDateISO(tomorrow);
       }
       const mentions = parseMentions(taskText);
-      let cleanText = deadline ? stripDeadlineFromText(taskText) : taskText;
+      // Only strip deadline from text if it was parsed from text (not from the tag)
+      let cleanText = (!_pendingDeadline && deadline) ? stripDeadlineFromText(taskText) : taskText;
       if (mentions.length) cleanText = stripMentionsFromText(cleanText);
 
       const item = {
@@ -1769,8 +1787,10 @@
       render();
       persistState();
       input.value = "";
+      clearPendingDeadline();
+      document.getElementById('mentionPreview').innerHTML = '';
       const qLabel = QUADRANT_META[prefix].label;
-      setFeedback('Added to "' + qLabel + '": ' + taskText, "success");
+      setFeedback('Added to "' + qLabel + '": ' + cleanText, "success");
     }
 
 
@@ -1786,30 +1806,34 @@
     }
 
     // ── / date picker ────────────────────────────────────────────────────────
-    function insertDate(which) {
-      const input = document.getElementById('cmdInput');
-      const dateStr = which === 'today' ? 'today' : 'tomorrow';
-      const pos = input.selectionStart;
-      const val = input.value;
-      const sep = pos > 0 && val[pos - 1] !== ' ' ? ' ' : '';
-      input.value = val.slice(0, pos) + sep + dateStr + val.slice(pos);
-      input.selectionStart = input.selectionEnd = pos + sep.length + dateStr.length;
-      input.focus();
+    let _pendingDeadline = null;
+
+    function setPendingDeadline(isoVal, label) {
+      _pendingDeadline = isoVal || null;
+      const tag = document.getElementById('cmdDateTag');
+      document.getElementById('cmdDateTagLabel').textContent = '📅 ' + label;
+      tag.classList.toggle('visible', !!_pendingDeadline);
       document.getElementById('datePickerPopup').classList.add('hidden');
+      document.getElementById('cmdInput').focus();
+    }
+
+    function clearPendingDeadline() {
+      _pendingDeadline = null;
+      document.getElementById('cmdDateTag').classList.remove('visible');
+    }
+
+    function insertDate(which) {
+      if (which === 'today') {
+        setPendingDeadline(localDateISO(), 'Aujourd\'hui');
+      } else {
+        const tom = new Date(); tom.setDate(tom.getDate() + 1);
+        setPendingDeadline(localDateISO(tom), 'Demain');
+      }
     }
 
     function insertDateFromPicker(isoVal) {
       if (!isoVal) return;
-      const [, m, d] = isoVal.split('-');
-      const dateStr = `${d}/${m}`;
-      const input = document.getElementById('cmdInput');
-      const pos = input.selectionStart;
-      const val = input.value;
-      const sep = pos > 0 && val[pos - 1] !== ' ' ? ' ' : '';
-      input.value = val.slice(0, pos) + sep + dateStr + val.slice(pos);
-      input.selectionStart = input.selectionEnd = pos + sep.length + dateStr.length;
-      input.focus();
-      document.getElementById('datePickerPopup').classList.add('hidden');
+      setPendingDeadline(isoVal, formatDeadlineDisplay(isoVal));
     }
 
     // ── Init ────────────────────────────────────────────────────────────────
