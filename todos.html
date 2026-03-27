@@ -224,24 +224,70 @@
     .delete-confirm .btn-yes:hover { background: #dc2626; }
     body.locked .delete-tag { opacity: .3; cursor: not-allowed; pointer-events: none; }
 
-    /* ── Comment modal ── */
-    .comment-modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.3);
+    /* ── Task detail modal ── */
+    .task-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
       z-index: 300; display: flex; align-items: center; justify-content: center;
       animation: fadeOverlay .15s ease;
     }
-    .comment-modal-overlay.hidden { display: none; }
-    @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
-    .comment-modal {
-      background: #fff; border-radius: 12px; padding: 20px;
-      width: min(460px, 90vw); box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    .task-modal-overlay.hidden { display: none; }
+    .task-modal {
+      background: #fff; border-radius: 14px; padding: 24px;
+      width: min(560px, 92vw); max-height: 85vh; overflow-y: auto;
+      box-shadow: 0 12px 48px rgba(0,0,0,.2);
       animation: slideUpModal .15s ease;
+      display: flex; flex-direction: column; gap: 18px;
     }
-    @keyframes slideUpModal { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    .comment-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .comment-modal-title { font-size: .82rem; font-weight: 600; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 12px; }
-    .comment-modal-close { font-family: var(--font); font-size: 1.2rem; border: none; background: none; cursor: pointer; color: #9ca3af; padding: 0 2px; line-height: 1; }
-    .comment-modal-close:hover { color: var(--text); }
+    .task-modal-header { display: flex; align-items: flex-start; gap: 10px; }
+    .task-modal-title-input {
+      font-family: var(--font); font-size: 1rem; font-weight: 600;
+      border: none; border-bottom: 2px solid transparent; outline: none;
+      flex: 1; padding: 2px 0; background: transparent; color: var(--text);
+      transition: border-color .15s;
+    }
+    .task-modal-title-input:focus { border-bottom-color: #6366f1; }
+    .task-modal-close { font-family: var(--font); font-size: 1.2rem; border: none; background: none; cursor: pointer; color: #9ca3af; padding: 0 2px; line-height: 1; flex-shrink: 0; }
+    .task-modal-close:hover { color: var(--text); }
+    .task-modal-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .task-modal-badge { font-size: .65rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: #fff; letter-spacing: .03em; }
+    .task-modal-created { font-size: .68rem; color: #9ca3af; }
+    .task-modal-section { display: flex; flex-direction: column; gap: 7px; }
+    .task-modal-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+    .task-modal-mentions { display: flex; flex-wrap: wrap; gap: 5px; min-height: 0; }
+    .task-modal-mention-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .task-modal-input-sm {
+      font-family: var(--font); font-size: .8rem; padding: 4px 9px;
+      border: 1.5px solid #e5e7eb; border-radius: 6px; outline: none;
+      width: 140px; color: var(--text); background: #fff;
+    }
+    .task-modal-input-sm:focus { border-color: #6366f1; }
+    .task-modal-input-sm::placeholder { color: #d1d5db; }
+    .task-modal-deadline-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .task-modal-no-comments { font-size: .78rem; color: #c4c9d4; font-style: italic; margin: 0; }
+    .task-modal-comments-list { display: flex; flex-direction: column; gap: 6px; }
+    .task-modal-comment {
+      background: #f9fafb; border: 1px solid #f3f4f6; border-radius: 7px;
+      padding: 9px 12px; display: flex; flex-direction: column; gap: 5px;
+    }
+    .task-modal-comment-text { font-size: .82rem; color: var(--text); cursor: pointer; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .task-modal-comment-text:hover { color: #6366f1; }
+    .task-modal-comment-meta { display: flex; align-items: center; gap: 8px; }
+    .task-modal-comment-date { font-size: .62rem; color: #9ca3af; }
+    .task-modal-comment-del { font-size: .62rem; color: #d1d5db; cursor: pointer; transition: color .12s; }
+    .task-modal-comment-del:hover { color: #ef4444; }
+    .task-modal-add { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .btn-add-comment {
+      font-family: var(--font); font-size: .72rem; font-weight: 600;
+      padding: 5px 12px; border-radius: 6px; border: none;
+      background: #6366f1; color: #fff; cursor: pointer; align-self: flex-start;
+    }
+    .btn-add-comment:hover { background: #4f46e5; }
+    .task-modal-dl-clear {
+      font-family: var(--font); font-size: .62rem; color: #d1d5db; border: none; background: none; cursor: pointer; padding: 0 2px;
+    }
+    .task-modal-dl-clear:hover { color: #ef4444; }
+
+    .todo-card { cursor: grab; }
     .comment-area {
       width: 100%; font-family: var(--font); font-size: .82rem; color: var(--text);
       border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px;
@@ -500,18 +546,33 @@
     Eisenhower Matrix · Drag cards between quadrants · Maxime's marvelous todolist
   </footer>
 
-  <!-- Comment modal -->
-  <div class="comment-modal-overlay hidden" id="commentModalOverlay" onclick="closeCommentModal()">
-    <div class="comment-modal" onclick="event.stopPropagation()">
-      <div class="comment-modal-header">
-        <span class="comment-modal-title" id="commentModalTitle"></span>
-        <button class="comment-modal-close" onclick="closeCommentModal()">×</button>
+  <!-- Task detail modal -->
+  <div class="task-modal-overlay hidden" id="taskModalOverlay" onclick="closeTaskModal()">
+    <div class="task-modal" onclick="event.stopPropagation()">
+      <div class="task-modal-header">
+        <input class="task-modal-title-input" id="taskModalTitleInput" type="text" />
+        <button class="task-modal-close" onclick="closeTaskModal()">×</button>
       </div>
-      <textarea class="comment-area" id="commentModalArea" placeholder="Ajouter une note…" rows="5"></textarea>
-      <div class="comment-actions">
-        <button class="btn-comment-save" onclick="saveCommentModal()">Save</button>
-        <span class="comment-del-tag" id="commentModalDelTag" style="display:none;" onclick="showCommentModalDelConfirm()">Delete note</span>
-        <span class="comment-del-confirm hidden" id="commentModalDelConfirm">confirm? <button class="btn-yes" onclick="doDeleteCommentModal()">✓</button><button class="btn-no" onclick="cancelCommentModalDelete()">×</button></span>
+      <div class="task-modal-meta" id="taskModalMeta"></div>
+      <div class="task-modal-section">
+        <div class="task-modal-label">Personnes</div>
+        <div class="task-modal-mentions" id="taskModalMentions"></div>
+        <div class="task-modal-mention-row">
+          <input type="text" id="taskModalMentionInput" class="task-modal-input-sm" placeholder="@prénom" onkeydown="handleMentionKey(event)" />
+          <span style="font-size:.68rem;color:#9ca3af;">Entrée pour ajouter</span>
+        </div>
+      </div>
+      <div class="task-modal-section">
+        <div class="task-modal-label">Deadline</div>
+        <div class="task-modal-deadline-row" id="taskModalDeadline"></div>
+      </div>
+      <div class="task-modal-section">
+        <div class="task-modal-label">Commentaires</div>
+        <div class="task-modal-comments-list" id="taskModalComments"></div>
+        <div class="task-modal-add">
+          <textarea class="comment-area" id="taskModalNewComment" placeholder="Nouveau commentaire…" rows="2"></textarea>
+          <button class="btn-add-comment" onclick="addTaskComment()">Ajouter</button>
+        </div>
       </div>
     </div>
   </div>
@@ -783,11 +844,12 @@
               <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-5a1 1 0 00-1 1v2a1 1 0 002 0V9a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
               OVERDUE
             </div>` : '';
-          const commentCount = item.comment ? '1' : '';
+          const commentCount = (item.comments && item.comments.length) ? item.comments.length : '';
           return `
           <div class="todo-card${isOverdue ? ' is-overdue' : ''}"
                draggable="true"
                data-id="${item.id}"
+               onclick="onCardClick('${item.id}', event)"
                ondragstart="onDragStart(event, '${item.id}')"
                ondragend="onDragEnd(event)">
             <div class="card-top">
@@ -800,7 +862,7 @@
               </div>
               <div class="card-body">
                 <div class="card-main">
-                  <p class="todo-text" ondblclick="editTitle('${item.id}')" title="Double-clic pour éditer">${item.text}</p>
+                  <p class="todo-text">${item.text}</p>
                   ${renderDepChips(item.dependency)}
                   ${renderMentionChips(item.mentions, item.id)}
                 </div>
@@ -813,7 +875,7 @@
                 confirm?
                 <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
               </div>
-              <button class="comment-badge${item.comment ? ' has-comment' : ''}" onclick="openCommentModal('${item.id}')" title="Note">
+              <button class="comment-badge${commentCount ? ' has-comment' : ''}" onclick="openTaskModal('${item.id}')" title="Détail">
                 <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
                 ${commentCount}
               </button>
@@ -874,9 +936,17 @@
 
     // ── Drag & Drop ──────────────────────────────────────────────────────────
     let _dragSourceQuadrant = null;
+    let _dragging = false;
+
+    function onCardClick(id, e) {
+      if (_dragging) return;
+      if (e.target.closest('button, input, textarea, .delete-tag, .delete-confirm, .deadline-area')) return;
+      openTaskModal(id);
+    }
 
     function onDragStart(e, id) {
       if (!isConnected) { e.preventDefault(); return; }
+      _dragging = true;
       dragId = id;
       e.dataTransfer.effectAllowed = "move";
       _dragSourceQuadrant = e.target.closest('.quadrant');
@@ -887,6 +957,7 @@
       e.target.classList.remove("dragging");
       document.querySelectorAll(".quadrant").forEach(q => q.classList.remove("drag-over"));
       _dragSourceQuadrant = null;
+      setTimeout(() => { _dragging = false; }, 0);
     }
 
     function onDragOver(e) {
@@ -954,53 +1025,136 @@
       persistState();
     }
 
-    // ── Comment modal ─────────────────────────────────────────────────────────
-    let _commentModalId = null;
+    // ── Task detail modal ─────────────────────────────────────────────────────
+    let _taskModalId = null;
 
-    function openCommentModal(id) {
+    function openTaskModal(id) {
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
       const item = todos.find(t => t.id === id);
       if (!item) return;
-      _commentModalId = id;
-      document.getElementById('commentModalTitle').textContent = item.text;
-      document.getElementById('commentModalArea').value = item.comment || '';
-      const delTag = document.getElementById('commentModalDelTag');
-      delTag.style.display = item.comment ? '' : 'none';
-      document.getElementById('commentModalDelConfirm').classList.add('hidden');
-      document.getElementById('commentModalOverlay').classList.remove('hidden');
-      setTimeout(() => document.getElementById('commentModalArea').focus(), 50);
+      _taskModalId = id;
+      document.getElementById('taskModalTitleInput').value = item.text;
+      const qMeta = QUADRANT_META[item.quadrant] || QUADRANT_META.NN;
+      document.getElementById('taskModalMeta').innerHTML =
+        `<span class="task-modal-badge" style="background:${qMeta.accent};">${qMeta.label}</span>
+         <span class="task-modal-created">created ${fmtDate(item.createdAt)}</span>`;
+      renderModalMentions(item);
+      renderModalDeadline(item);
+      renderModalComments(item);
+      document.getElementById('taskModalNewComment').value = '';
+      document.getElementById('taskModalMentionInput').value = '';
+      document.getElementById('taskModalOverlay').classList.remove('hidden');
     }
 
-    function closeCommentModal() {
-      document.getElementById('commentModalOverlay').classList.add('hidden');
-      _commentModalId = null;
+    function closeTaskModal() {
+      if (_taskModalId) {
+        const item = todos.find(t => t.id === _taskModalId);
+        const newText = document.getElementById('taskModalTitleInput').value.trim();
+        if (item && newText && newText !== item.text) {
+          item.text = newText;
+          persistState();
+          render();
+        }
+      }
+      document.getElementById('taskModalOverlay').classList.add('hidden');
+      _taskModalId = null;
     }
 
-    function saveCommentModal() {
-      if (!_commentModalId) return;
-      const item = todos.find(t => t.id === _commentModalId);
-      if (!item) return;
-      item.comment = document.getElementById('commentModalArea').value.trim();
-      persistState();
-      render();
-      document.getElementById('commentModalDelTag').style.display = item.comment ? '' : 'none';
-      document.getElementById('commentModalDelConfirm').classList.add('hidden');
+    function renderModalMentions(item) {
+      const mentions = item.mentions || [];
+      document.getElementById('taskModalMentions').innerHTML = mentions.map(name => {
+        const c = chipColor(name);
+        return `<span class="mention-chip" style="background:${c.bg};color:${c.text};">@ ${name}
+          <button class="chip-remove" onclick="removeModalMention('${escHtml(name)}')" title="Retirer">×</button></span>`;
+      }).join('');
     }
 
-    function showCommentModalDelConfirm() {
-      document.getElementById('commentModalDelConfirm').classList.remove('hidden');
+    function removeModalMention(name) {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      item.mentions = (item.mentions || []).filter(m => m !== name);
+      persistState(); render(); renderModalMentions(item);
     }
-    function cancelCommentModalDelete() {
-      document.getElementById('commentModalDelConfirm').classList.add('hidden');
+
+    function handleMentionKey(e) {
+      if (e.key !== 'Enter' && e.key !== ',') return;
+      e.preventDefault();
+      const input = document.getElementById('taskModalMentionInput');
+      const val = input.value.trim().replace(/^@/, '');
+      if (!val || !_taskModalId) return;
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      item.mentions = [...new Set([...(item.mentions || []), val])];
+      persistState(); render(); renderModalMentions(item);
+      input.value = '';
     }
-    function doDeleteCommentModal() {
-      if (!_commentModalId) return;
-      const item = todos.find(t => t.id === _commentModalId);
-      if (!item) return;
-      item.comment = '';
-      persistState();
-      render();
-      closeCommentModal();
+
+    function renderModalDeadline(item) {
+      const todayISO = localDateISO();
+      const tom = new Date(); tom.setDate(tom.getDate() + 1);
+      const tomorrowISO = localDateISO(tom);
+      const display = item.deadline ? formatDeadlineDisplay(item.deadline) : null;
+      const cls = item.deadline ? deadlineColorClass(item.deadline) : '';
+      document.getElementById('taskModalDeadline').innerHTML =
+        (display ? `<span class="deadline-badge ${cls}">${display}</span>` : '') +
+        `<button class="dl-quick-btn" onclick="setModalDeadline('${todayISO}')">Aujourd'hui</button>
+         <button class="dl-quick-btn" onclick="setModalDeadline('${tomorrowISO}')">Demain</button>
+         <input type="date" class="dp-custom" style="flex:1;min-width:120px;" value="${item.deadline||''}" onchange="setModalDeadline(this.value)" />` +
+        (item.deadline ? `<button class="task-modal-dl-clear" onclick="setModalDeadline('')" title="Effacer">✕</button>` : '');
+    }
+
+    function setModalDeadline(val) {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      item.deadline = val || null;
+      persistState(); render(); renderModalDeadline(item);
+    }
+
+    function renderModalComments(item) {
+      const comments = item.comments || [];
+      const list = document.getElementById('taskModalComments');
+      if (!comments.length) { list.innerHTML = '<p class="task-modal-no-comments">Aucun commentaire</p>'; return; }
+      list.innerHTML = comments.map(c => `
+        <div class="task-modal-comment" id="tmc-${c.id}">
+          <div class="task-modal-comment-text" onclick="editModalComment('${c.id}')">${escHtml(c.text)}</div>
+          <div class="task-modal-comment-meta">
+            <span class="task-modal-comment-date">${fmtDate(c.createdAt)}</span>
+            <span class="task-modal-comment-del" onclick="deleteModalComment('${c.id}')">supprimer</span>
+          </div>
+        </div>`).join('');
+    }
+
+    function addTaskComment() {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      const ta = document.getElementById('taskModalNewComment');
+      const text = ta.value.trim(); if (!text) return;
+      if (!item.comments) item.comments = [];
+      item.comments.push({ id: generateId(), text, createdAt: new Date().toISOString() });
+      ta.value = ''; persistState(); render(); renderModalComments(item);
+    }
+
+    function editModalComment(cid) {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      const comment = (item.comments || []).find(c => c.id === cid); if (!comment) return;
+      const div = document.getElementById('tmc-' + cid); if (!div) return;
+      const textEl = div.querySelector('.task-modal-comment-text');
+      const ta = document.createElement('textarea');
+      ta.className = 'comment-area'; ta.rows = 2; ta.style.marginBottom = '4px';
+      ta.value = comment.text;
+      ta.onblur = () => {
+        const v = ta.value.trim();
+        if (v) comment.text = v;
+        persistState(); render(); renderModalComments(item);
+      };
+      ta.onkeydown = e => { if (e.key === 'Escape') ta.blur(); };
+      textEl.replaceWith(ta); ta.focus();
+    }
+
+    function deleteModalComment(cid) {
+      const item = todos.find(t => t.id === _taskModalId); if (!item) return;
+      item.comments = (item.comments || []).filter(c => c.id !== cid);
+      persistState(); render(); renderModalComments(item);
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function clearDone() {
@@ -1299,7 +1453,11 @@
           if (t.mentions.length) t.text = stripMentionsFromText(t.text);
           changed = true;
         }
-        if (!('comment' in t)) { t.comment = ''; changed = true; }
+        if (!('comments' in t)) {
+          t.comments = (t.comment) ? [{ id: generateId(), text: t.comment, createdAt: t.createdAt }] : [];
+          delete t.comment;
+          changed = true;
+        }
       });
       if (changed) {
         localStorage.setItem(LS_KEY, JSON.stringify(todos));
@@ -1527,7 +1685,7 @@
 
     // Close modal on Escape
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') closeCommentModal();
+      if (e.key === 'Escape') closeTaskModal();
     });
 
     // Close date picker and delete confirms on outside click
