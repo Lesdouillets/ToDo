@@ -1,5 +1,7 @@
 # Maxime's Marvelous Todolist
 
+**[https://lesdouillets.github.io/maxime_todo/todos.html](https://lesdouillets.github.io/maxime_todo/todos.html)**
+
 A personal Eisenhower-matrix task manager that lives inside [Cursor](https://cursor.sh). You talk to it in the Cursor chat, it organises your tasks into a beautiful interactive HTML dashboard you open in your browser — no server, no accounts, no dependencies.
 
 ---
