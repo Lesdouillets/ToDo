@@ -90,6 +90,19 @@
       "createdAt": "2026-03-30T07:42:04.908Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "c3c1b460-1845-4089-af78-ecc01e47fc0d",
+      "text": "Relancer François et Djlilali sur monitoring des Good Deals",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": "2026-03-31",
+      "mentions": [],
+      "createdAt": "2026-03-30T09:41:28.184Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
