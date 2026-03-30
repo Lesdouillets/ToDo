@@ -584,17 +584,25 @@
       padding: 8px 0 10px;
       margin: 0 -12px 12px;
     }
-    .mobile-tabs-inner { display: flex; gap: 8px; padding: 0 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-    .mobile-tabs-inner::-webkit-scrollbar { display: none; }
-    .mtab {
-      flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
-      font-family: var(--font); font-size: .63rem; font-weight: 600;
-      padding: 6px 16px; border-radius: 999px;
-      border: 1.5px solid #e5e7eb; background: #fff; color: var(--muted);
-      cursor: pointer; transition: all .15s; white-space: nowrap;
+    .mobile-filter-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      width: calc(100% - 24px); margin: 0 12px;
+      font-family: var(--font); font-size: .82rem; font-weight: 600;
+      padding: 10px 16px; border-radius: 12px;
+      border: 1.5px solid var(--border); background: var(--card-bg); color: var(--text);
+      cursor: pointer; transition: border-color .15s;
     }
-    .mtab .tab-icon { font-size: .95rem; }
-    .mtab.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+    .mobile-filter-btn:active { border-color: var(--accent); }
+    .mobile-filter-chevron { font-size: .75rem; color: var(--muted); }
+    .filter-sheet-options { display: flex; flex-direction: column; gap: 6px; }
+    .filter-opt {
+      font-family: var(--font); font-size: .88rem; font-weight: 600;
+      padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--border);
+      background: var(--input-bg); color: var(--text);
+      text-align: left; cursor: pointer; transition: all .12s;
+    }
+    .filter-opt:active { border-color: var(--accent); background: var(--card-bg); }
+    .filter-opt.active  { border-color: var(--accent); color: var(--accent); background: var(--card-bg); }
 
     /* ── Move-to overlay (mobile long press) ── */
     .move-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 500; display: flex; align-items: flex-end; }
@@ -1290,13 +1298,26 @@
     <div class="axis-label">Not Urgent ➡</div>
   </div>
 
-  <!-- Mobile quadrant tab bar -->
+  <!-- Mobile filter bar -->
   <div class="mobile-tabs" id="mobileTabs">
-    <div class="mobile-tabs-inner">
-      <button class="mtab active" data-q="IU" onclick="scrollToQuadrant('IU')"><span class="tab-icon">🔥</span>Do First</button>
-      <button class="mtab"        data-q="IN" onclick="scrollToQuadrant('IN')"><span class="tab-icon">📅</span>Schedule</button>
-      <button class="mtab"        data-q="NU" onclick="scrollToQuadrant('NU')"><span class="tab-icon">🤝</span>Delegate</button>
-      <button class="mtab"        data-q="NN" onclick="scrollToQuadrant('NN')"><span class="tab-icon">🗑</span>Eliminate</button>
+    <button class="mobile-filter-btn" id="mobileFilterBtn" onclick="openFilterSheet()">
+      <span id="mobileFilterLabel">Toutes les tâches</span>
+      <span class="mobile-filter-chevron">▾</span>
+    </button>
+  </div>
+
+  <!-- Filter bottom sheet -->
+  <div class="move-menu-overlay hidden" id="filterSheetOverlay" onclick="closeFilterSheet()">
+    <div class="move-menu" onclick="event.stopPropagation()">
+      <div class="move-menu-title">Afficher</div>
+      <div class="filter-sheet-options">
+        <button class="filter-opt" data-q=""   onclick="applyFilter(null)">📋 Toutes les tâches</button>
+        <button class="filter-opt" data-q="IU" onclick="applyFilter('IU')">🔥 Do First — Important · Urgent</button>
+        <button class="filter-opt" data-q="IN" onclick="applyFilter('IN')">📅 Schedule — Important · Not Urgent</button>
+        <button class="filter-opt" data-q="NU" onclick="applyFilter('NU')">🤝 Delegate — Not Important · Urgent</button>
+        <button class="filter-opt" data-q="NN" onclick="applyFilter('NN')">🗑 Eliminate — Not Important · Not Urgent</button>
+      </div>
+      <button class="move-menu-cancel" onclick="closeFilterSheet()">Annuler</button>
     </div>
   </div>
 
@@ -1767,6 +1788,13 @@
       document.getElementById("totalBadge").textContent = active.length + " active";
       const mnavBadge = document.getElementById('mnavBadge');
       if (mnavBadge) mnavBadge.textContent = active.length || '';
+
+      // Re-apply mobile filter after render (quadrants are re-created by innerHTML)
+      if (typeof _mobileFilter !== 'undefined' && _mobileFilter) {
+        document.querySelectorAll('.quadrant').forEach(el => {
+          el.style.display = el.dataset.quadrant === _mobileFilter ? '' : 'none';
+        });
+      }
 
       // ── Due today strip ──
       const todayStr = localDateISO();
@@ -2781,25 +2809,40 @@
       closeMoveMenu();
     }
 
-    // ── Mobile: tab navigation ───────────────────────────────────────────────
-    function scrollToQuadrant(q) {
-      const el = document.querySelector(`[data-quadrant="${q}"]`);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setActiveTab(q);
+    // ── Mobile: filter menu ──────────────────────────────────────────────────
+    let _mobileFilter = null; // null = show all, 'IU'/'IN'/'NU'/'NN' = filter
+
+    const FILTER_LABELS = {
+      null: 'Toutes les tâches',
+      IU: '🔥 Do First',
+      IN: '📅 Schedule',
+      NU: '🤝 Delegate',
+      NN: '🗑 Eliminate',
+    };
+
+    function openFilterSheet() {
+      // Update active state on options
+      document.querySelectorAll('.filter-opt').forEach(b =>
+        b.classList.toggle('active', b.dataset.q === (_mobileFilter || ''))
+      );
+      document.getElementById('filterSheetOverlay').classList.remove('hidden');
     }
 
-    function setActiveTab(q) {
-      document.querySelectorAll('.mtab').forEach(t => t.classList.toggle('active', t.dataset.q === q));
+    function closeFilterSheet() {
+      document.getElementById('filterSheetOverlay').classList.add('hidden');
     }
 
-    function initTabObserver() {
-      if (window.innerWidth > 680) return;
-      const obs = new IntersectionObserver(entries => {
-        let best = null, bestRatio = 0;
-        entries.forEach(e => { if (e.intersectionRatio > bestRatio) { bestRatio = e.intersectionRatio; best = e.target; } });
-        if (best) setActiveTab(best.dataset.quadrant);
-      }, { threshold: [0.2, 0.5] });
-      document.querySelectorAll('.quadrant').forEach(q => obs.observe(q));
+    function applyFilter(q) {
+      _mobileFilter = q;
+      // Show/hide quadrants
+      document.querySelectorAll('.quadrant').forEach(el => {
+        el.style.display = (!q || el.dataset.quadrant === q) ? '' : 'none';
+      });
+      // Update button label
+      const lbl = document.getElementById('mobileFilterLabel');
+      if (lbl) lbl.textContent = FILTER_LABELS[q] || 'Toutes les tâches';
+      closeFilterSheet();
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     // ── Mobile capture screen ───────────────────────────────────────────────
@@ -2948,7 +2991,7 @@
     updateConnectionUI(); // start locked
     tryAutoConnect();    // silently reconnect if handle + permission already available
     render();
-    initTabObserver();
+    // initTabObserver removed — replaced by explicit filter menu
     setTimeout(() => location.reload(), 600_000); // auto-refresh every 10 min
 
     // @ mention live preview
