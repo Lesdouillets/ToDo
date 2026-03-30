@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Maxime's marvelous todolist</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1128,7 +1128,7 @@
       /* Task textarea */
       .mcs-task-input {
         width: 100%; box-sizing: border-box; flex: 1;
-        font-family: var(--font); font-size: .95rem; font-weight: 500;
+        font-family: var(--font); font-size: 16px; font-weight: 500;
         color: var(--text); line-height: 1.55;
         padding: 14px 16px; border-radius: 16px;
         border: 2px solid var(--border); background: var(--input-bg);
@@ -1156,7 +1156,7 @@
       }
       .mcs-mention-input {
         flex: 1; min-width: 90px; border: none; background: transparent;
-        outline: none; font-family: var(--font); font-size: .85rem; color: var(--text);
+        outline: none; font-family: var(--font); font-size: 16px; color: var(--text);
       }
       .mcs-mention-input::placeholder { color: var(--muted); }
 
@@ -2952,7 +2952,6 @@
       _mcMentions = [];
       mcRenderMentionChips();
       mcClearDate();
-      document.getElementById('mcTaskInput').focus();
 
       mcFeedback('✓ Ajouté dans ' + QUADRANT_META[_mcQuadrant].label, 'success');
     }
@@ -2971,8 +2970,6 @@
       document.getElementById('mnavBoard').classList.toggle('active',  isBoard);
       if (isBoard) {
         window.scrollTo({ top: 0, behavior: 'instant' });
-      } else {
-        document.getElementById('mcTaskInput').focus();
       }
     }
 
