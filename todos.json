@@ -125,6 +125,19 @@
           "type": "blocks"
         }
       ]
+    },
+    {
+      "id": "8b6b8fd1-c073-4900-89fa-773b01c5ab40",
+      "text": "Relancer Chloé pour Wording SLFGJ + confirmation Marketing",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-03-31",
+      "mentions": [],
+      "createdAt": "2026-03-30T15:43:18.056Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
