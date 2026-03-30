@@ -69,6 +69,19 @@
           "type": "blocks"
         }
       ]
+    },
+    {
+      "id": "5466c3d6-b89b-4ab3-8bc6-7fe45ad19a94",
+      "text": "Demander la traduction des wordings de SiLaFranceGagneJe",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-03-30",
+      "mentions": [],
+      "createdAt": "2026-03-30T07:42:04.908Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
