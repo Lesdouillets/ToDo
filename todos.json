@@ -52,7 +52,9 @@
       "urgent": true,
       "dependency": null,
       "deadline": "2026-03-30",
-      "mentions": [],
+      "mentions": [
+        "Damien"
+      ],
       "createdAt": "2026-03-27T19:33:48.925Z",
       "done": false,
       "completedAt": null,
