@@ -56,8 +56,8 @@
         "Damien"
       ],
       "createdAt": "2026-03-27T19:33:48.925Z",
-      "done": true,
-      "completedAt": "2026-03-30T07:44:41.516Z",
+      "done": false,
+      "completedAt": null,
       "comments": [
         {
           "id": "fb46b920-8d5a-4105-8872-dd3f2443260e",
