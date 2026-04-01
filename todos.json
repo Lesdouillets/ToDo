@@ -144,6 +144,19 @@
           "type": "blocks"
         }
       ]
+    },
+    {
+      "id": "5edb5a05-f592-4d49-955b-4a9294546261",
+      "text": "Ajuster HMTL calendrier CDM pour mise en visibilité des différentes phases finales",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-01T13:07:46.832Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
