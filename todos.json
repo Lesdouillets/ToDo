@@ -177,7 +177,9 @@
       "important": true,
       "urgent": false,
       "deadline": null,
-      "mentions": [],
+      "mentions": [
+        "Audrey"
+      ],
       "createdAt": "2026-04-02T10:21:02.207Z",
       "done": false,
       "completedAt": null
