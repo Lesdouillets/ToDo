@@ -206,7 +206,7 @@
       "important": true,
       "urgent": false,
       "dependency": null,
-      "deadline": null,
+      "deadline": "2026-04-09",
       "mentions": [],
       "createdAt": "2026-04-02T15:48:01.671Z",
       "done": false,
