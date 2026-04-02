@@ -157,6 +157,18 @@
       "createdAt": "2026-04-01T13:07:46.832Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "976d8f9c-2ed6-4b3c-be61-6c1d807da244",
+      "text": "Envoyer visuel par mail à Audrey avec validation interne Martin et Thomas sur usage du logo",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-02T10:20:15.220Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
