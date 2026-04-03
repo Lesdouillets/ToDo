@@ -218,6 +218,19 @@
           "createdAt": "2026-04-02T15:48:26.652Z"
         }
       ]
+    },
+    {
+      "id": "814fa6e4-e0fe-44e9-94d9-b293b6347848",
+      "text": "Mettre à jour spec Good Deals GEN AI -> Créer nouvelle page, lier à l'ancienne et à l'idée JIRA",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-04",
+      "mentions": [],
+      "createdAt": "2026-04-03T12:39:44.156Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
