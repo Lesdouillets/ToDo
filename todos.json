@@ -240,7 +240,9 @@
       "urgent": true,
       "dependency": null,
       "deadline": "2026-04-09",
-      "mentions": [],
+      "mentions": [
+        "Théo"
+      ],
       "createdAt": "2026-04-08T14:04:59.430Z",
       "done": false,
       "completedAt": null
