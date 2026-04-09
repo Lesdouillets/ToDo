@@ -86,6 +86,19 @@
       "createdAt": "2026-04-09T13:35:11.785Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "cc95c222-6d49-4daf-8490-3f197ac8f201",
+      "text": "Rédiger Spec New Brackets",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-09T13:35:18.499Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
