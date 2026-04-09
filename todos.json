@@ -57,7 +57,7 @@
     {
       "id": "f60c6ac4-0092-40e3-8b90-62f936485059",
       "text": "Clean la présentation sur les Good Deals pour Martin suite au meeting avec Damien",
-      "quadrant": "IN",
+      "quadrant": "IU",
       "important": true,
       "urgent": false,
       "dependency": null,
