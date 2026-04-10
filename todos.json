@@ -97,8 +97,8 @@
       "deadline": "2026-04-10",
       "mentions": [],
       "createdAt": "2026-04-09T13:35:18.499Z",
-      "done": false,
-      "completedAt": null
+      "done": true,
+      "completedAt": "2026-04-10T11:57:06.033Z"
     }
   ]
 }
