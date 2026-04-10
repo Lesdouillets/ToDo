@@ -73,32 +73,6 @@
           "createdAt": "2026-04-02T15:48:26.652Z"
         }
       ]
-    },
-    {
-      "id": "8597f3ab-4626-4b9c-81ed-56e2173397ca",
-      "text": "Rédiger page Spec Momentum Basket",
-      "quadrant": "IN",
-      "important": true,
-      "urgent": false,
-      "dependency": null,
-      "deadline": null,
-      "mentions": [],
-      "createdAt": "2026-04-09T13:35:11.785Z",
-      "done": true,
-      "completedAt": "2026-04-10T04:17:53.582Z"
-    },
-    {
-      "id": "cc95c222-6d49-4daf-8490-3f197ac8f201",
-      "text": "Rédiger Spec New Brackets",
-      "quadrant": "IN",
-      "important": true,
-      "urgent": false,
-      "dependency": null,
-      "deadline": "2026-04-10",
-      "mentions": [],
-      "createdAt": "2026-04-09T13:35:18.499Z",
-      "done": true,
-      "completedAt": "2026-04-10T11:57:06.033Z"
     }
   ]
 }
