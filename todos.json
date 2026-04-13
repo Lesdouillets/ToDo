@@ -1,19 +1,6 @@
 {
   "todos": [
     {
-      "id": "5edb5a05-f592-4d49-955b-4a9294546261",
-      "text": "Ajuster HMTL calendrier CDM pour mise en visibilité des différentes phases finales",
-      "quadrant": "IN",
-      "important": true,
-      "urgent": false,
-      "dependency": null,
-      "deadline": "2026-04-17",
-      "mentions": [],
-      "createdAt": "2026-04-01T13:07:46.832Z",
-      "done": true,
-      "completedAt": "2026-04-13T07:41:42.338Z"
-    },
-    {
       "id": "976d8f9c-2ed6-4b3c-be61-6c1d807da244",
       "text": "Envoyer visuel par mail à Audrey avec validation interne Martin et Thomas sur usage du logo",
       "quadrant": "IN",
