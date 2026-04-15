@@ -51,8 +51,8 @@
       "deadline": "2026-04-14",
       "mentions": [],
       "createdAt": "2026-04-02T15:48:01.671Z",
-      "done": false,
-      "completedAt": null,
+      "done": true,
+      "completedAt": "2026-04-15T09:30:30.056Z",
       "comments": [
         {
           "id": "415b7bab-f537-4fb4-b319-ef54968e782e",
