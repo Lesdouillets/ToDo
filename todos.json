@@ -38,8 +38,8 @@
       "deadline": "2026-04-17",
       "mentions": [],
       "createdAt": "2026-04-02T11:36:57.516Z",
-      "done": false,
-      "completedAt": null
+      "done": true,
+      "completedAt": "2026-04-15T09:31:21.756Z"
     },
     {
       "id": "f60c6ac4-0092-40e3-8b90-62f936485059",
