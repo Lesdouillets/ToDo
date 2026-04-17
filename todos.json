@@ -95,7 +95,7 @@
     {
       "id": "9e0ae390-3398-478a-a802-7b6ef19b08b1",
       "text": "Créer ticket pour onboarding Momentum",
-      "quadrant": "IU",
+      "quadrant": "IN",
       "important": true,
       "urgent": true,
       "dependency": null,
