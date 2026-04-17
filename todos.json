@@ -82,7 +82,7 @@
     {
       "id": "62bcf05e-945f-4f13-99ff-2b4d321e65dd",
       "text": "Créer ticket BL pour ajout des tooltips dans les Bons Plans",
-      "quadrant": "IU",
+      "quadrant": "IN",
       "important": true,
       "urgent": true,
       "dependency": null,
