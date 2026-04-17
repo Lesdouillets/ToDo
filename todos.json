@@ -156,6 +156,19 @@
       "createdAt": "2026-04-17T13:17:57.151Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "6b1bd45d-d516-4d9c-b08e-17d11e0a3fee",
+      "text": "voir le dernier design iOS MOTD avec JB",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-18",
+      "mentions": [],
+      "createdAt": "2026-04-17T13:22:02.283Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
