@@ -121,7 +121,7 @@
     {
       "id": "616417b1-86f9-41be-ad31-0a0a9df26ae4",
       "text": "Créer ticket pour S3 pour possibilité de modifier le tant des Boosted Odds selon la régulation",
-      "quadrant": "IU",
+      "quadrant": "IN",
       "important": true,
       "urgent": true,
       "dependency": null,
