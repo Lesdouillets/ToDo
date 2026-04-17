@@ -104,6 +104,19 @@
       "createdAt": "2026-04-17T07:43:54.543Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "75a92a8c-b43b-4e73-b7f6-b26edb4675eb",
+      "text": "Créer ticket pour AI Assistant Beta Match Page \"résumé du match\"",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-17T07:46:36.910Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
