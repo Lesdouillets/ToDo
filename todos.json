@@ -69,7 +69,7 @@
     {
       "id": "b9e23c38-5d1e-4a08-9aaf-bfe566d17a8f",
       "text": "Créer ticket BL pour ajout du bloc BP dans les pages Outirghts",
-      "quadrant": "IU",
+      "quadrant": "IN",
       "important": true,
       "urgent": true,
       "dependency": null,
