@@ -91,6 +91,19 @@
       "createdAt": "2026-04-17T07:17:03.319Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "9e0ae390-3398-478a-a802-7b6ef19b08b1",
+      "text": "Créer ticket pour onboarding Momentum",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-18",
+      "mentions": [],
+      "createdAt": "2026-04-17T07:43:54.543Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
