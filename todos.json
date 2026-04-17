@@ -78,6 +78,19 @@
       "createdAt": "2026-04-17T07:16:38.371Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "62bcf05e-945f-4f13-99ff-2b4d321e65dd",
+      "text": "Créer ticket BL pour ajout des tooltips dans les Bons Plans",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-18",
+      "mentions": [],
+      "createdAt": "2026-04-17T07:17:03.319Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
