@@ -130,6 +130,19 @@
       "createdAt": "2026-04-17T09:16:23.685Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "088de230-8de9-4a22-98f2-b4004be8b482",
+      "text": "voir avec Jusitn pour ticket sur mise en première position du groupe du pays de l'équipe nationale",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-18",
+      "mentions": [],
+      "createdAt": "2026-04-17T13:13:33.109Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
