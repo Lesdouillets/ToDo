@@ -143,6 +143,19 @@
       "createdAt": "2026-04-17T13:13:33.109Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "9d11c8f8-0b93-4c52-b988-24986f66bfa3",
+      "text": "voir avec Si pour que ca soit une typo system, pas de police Betclic",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-18",
+      "mentions": [],
+      "createdAt": "2026-04-17T13:17:57.151Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
