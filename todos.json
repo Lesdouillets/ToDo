@@ -65,6 +65,19 @@
           "createdAt": "2026-04-10T13:48:29.625Z"
         }
       ]
+    },
+    {
+      "id": "b9e23c38-5d1e-4a08-9aaf-bfe566d17a8f",
+      "text": "Créer ticket BL pour ajout du bloc BP dans les pages Outirghts",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-18",
+      "mentions": [],
+      "createdAt": "2026-04-17T07:16:38.371Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
