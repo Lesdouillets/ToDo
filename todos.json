@@ -172,7 +172,7 @@
     },
     {
       "id": "49341afc-7c14-42d3-950e-bc178da83475",
-      "text": "Créer Idea pour afficher rendu dans DCC les nouvelles tempalte cards",
+      "text": "Faire un front Phoenix pour gérer le card layout -> réserver de la capacité en S3",
       "quadrant": "IN",
       "important": true,
       "urgent": false,
