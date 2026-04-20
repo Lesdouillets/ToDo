@@ -169,6 +169,19 @@
       "createdAt": "2026-04-17T13:22:02.283Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "49341afc-7c14-42d3-950e-bc178da83475",
+      "text": "Créer Idea pour afficher rendu dans DCC les nouvelles tempalte cards",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-20T12:27:28.881Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
