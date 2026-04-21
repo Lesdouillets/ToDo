@@ -208,6 +208,19 @@
       "createdAt": "2026-04-21T09:44:01.767Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "4b025bab-221d-40a9-a2bc-c4020e36cd93",
+      "text": "Create Ticket for eligibility part of Good Deals",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-21T11:46:45.589Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
