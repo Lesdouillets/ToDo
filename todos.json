@@ -195,6 +195,19 @@
       "createdAt": "2026-04-20T12:28:50.079Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "557c4ed3-1fb8-46e9-8585-68aea9649303",
+      "text": "Valider Logo PT Mondial",
+      "quadrant": "IN",
+      "important": true,
+      "urgent": false,
+      "dependency": null,
+      "deadline": null,
+      "mentions": [],
+      "createdAt": "2026-04-21T09:44:01.767Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
