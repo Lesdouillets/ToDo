@@ -245,8 +245,8 @@
       "deadline": "2026-04-22",
       "mentions": [],
       "createdAt": "2026-04-21T13:25:50.194Z",
-      "done": false,
-      "completedAt": null
+      "done": true,
+      "completedAt": "2026-04-21T20:01:12.750Z"
     }
   ]
 }
