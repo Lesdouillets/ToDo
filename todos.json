@@ -180,8 +180,8 @@
       "deadline": null,
       "mentions": [],
       "createdAt": "2026-04-20T12:27:28.881Z",
-      "done": false,
-      "completedAt": null
+      "done": true,
+      "completedAt": "2026-04-21T20:17:53.819Z"
     },
     {
       "id": "01d67a15-cc4e-4259-9e39-91426706935f",
