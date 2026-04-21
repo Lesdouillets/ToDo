@@ -193,8 +193,8 @@
       "deadline": null,
       "mentions": [],
       "createdAt": "2026-04-20T12:28:50.079Z",
-      "done": false,
-      "completedAt": null
+      "done": true,
+      "completedAt": "2026-04-21T20:21:44.736Z"
     },
     {
       "id": "557c4ed3-1fb8-46e9-8585-68aea9649303",
