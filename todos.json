@@ -221,6 +221,19 @@
       "createdAt": "2026-04-21T11:46:45.589Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "a8114f29-bcec-4cf0-8d24-f69fc864534c",
+      "text": "Vérifier avec Pierre Godin si les drapeuax Worldcups sont bien présents",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-22",
+      "mentions": [],
+      "createdAt": "2026-04-21T12:09:03.431Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
