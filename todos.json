@@ -260,6 +260,19 @@
       "createdAt": "2026-04-22T14:37:23.207Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "039285f5-692b-4778-8cf7-822434b98448",
+      "text": "Ajouter Slide Exec Sum à la presentation Bons Plans + envoyer doc dans la converion du meeting bons plans",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-23",
+      "mentions": [],
+      "createdAt": "2026-04-22T18:41:06.066Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
