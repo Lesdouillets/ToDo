@@ -66,6 +66,19 @@
       "createdAt": "2026-04-22T18:41:06.066Z",
       "done": false,
       "completedAt": null
+    },
+    {
+      "id": "78d05758-6537-4d61-8b00-7f622da8e88e",
+      "text": "COntacter Pierre D pour engager rapidement le filtrage des selections Good Deals dans Phoenix Match Details",
+      "quadrant": "IU",
+      "important": true,
+      "urgent": true,
+      "dependency": null,
+      "deadline": "2026-04-24",
+      "mentions": [],
+      "createdAt": "2026-04-23T20:07:11.361Z",
+      "done": false,
+      "completedAt": null
     }
   ]
 }
