@@ -2,7 +2,7 @@
 
 **[https://lesdouillets.github.io/Maxime_ToDo/todos.html](https://lesdouillets.github.io/Maxime_ToDo/todos.html)**
 
-A personal Eisenhower-matrix task manager that lives inside [Cursor](https://cursor.sh). You talk to it in the Cursor chat, it organises your tasks into a beautiful interactive HTML dashboard you open in your browser — no server, no accounts, no dependencies.
+A personal task manager that lives inside [Cursor](https://cursor.sh). You talk to it in the Cursor chat, it organises your tasks into a single interactive HTML dashboard you open in your browser — no server, no accounts, no dependencies.
 
 ---
 
@@ -39,46 +39,36 @@ Create a file called `todos.json` in your working folder with this content:
 
 After adding your first task (see below), open `todos.html` in Chrome or Safari. That's it.
 
-> **Browser requirement:** Chrome 86+ or Safari 15.2+ — needed for the File System Access API that lets the page write back to `todos.json`.
-
 ---
 
 ## Adding tasks
 
-Type directly in the Cursor chat using a **quadrant prefix** followed by your task description.
+Type directly in the Cursor chat — or in the dashboard's command bar.
 
-### Quadrant prefixes (Eisenhower matrix)
+### Mark a task as urgent
 
-| Prefix | Also accepted as | Quadrant | Colour | Meaning |
-|--------|-----------------|----------|--------|---------|
-| `IU` | `important urgent` | **Do First** | Red | High value, needs doing today |
-| `IN` | `important not urgent` | **Schedule** | Blue | High value, can be planned |
-| `NU` | `not important urgent` | **Delegate** | Orange | Low value but time-sensitive |
-| `NN` | `not important not urgent` | **Eliminate** | Grey | Low value, low urgency |
-
-The order of words doesn't matter — `urgent important` works the same as `important urgent`.
-
-### Basic examples
+Either prefix with `!` or include the word `urgent` anywhere in the input. The flag is stripped from the saved title.
 
 ```
-IU Fix the production bug
-IN Write the Q2 roadmap
-NU Reply to the meeting invite
-NN Clean up old Slack channels
+Fix the production bug
+! Hotfix the login crash
+urgent Send investor recap
 ```
+
+Both of the urgent examples above produce a task with the `Urgent` badge.
 
 ### With a deadline
 
 The deadline is parsed automatically and stripped from the title:
 
 ```
-IN Prepare strategy workshop by friday
-IN Submit report before 17/04
-IU Fix onboarding bug in 3 days
-NN Archive old projects within a week
+Prepare strategy workshop by friday
+Submit report before 17/04
+! Fix onboarding bug in 3 days
+Archive old projects within a week
 ```
 
-**All recognised deadline patterns:**
+**Recognised deadline patterns:**
 
 | What you type | Result |
 |---|---|
@@ -92,15 +82,15 @@ NN Archive old projects within a week
 | `in 2 weeks` | Today + 14 days |
 | `by march 6th` / `6th march` | That calendar date |
 
-> **IU items without a deadline automatically get a deadline of tomorrow.**
+> **Urgent items without a deadline automatically get a deadline of tomorrow.**
 
 ### With @mentions
 
 Tag people involved in the task using `@Name`. Their names appear as coloured chips under the task title in the dashboard, and are stripped from the title text:
 
 ```
-IN Review spec @Marie @Antoine by friday
-IU Fix login bug @Backend
+Review spec @Marie @Antoine by friday
+! Fix login bug @Backend
 ```
 
 ### With a dependency
@@ -108,8 +98,8 @@ IU Fix login bug @Backend
 Signal that the task is blocked by someone using natural language. A chip is shown under the title:
 
 ```
-IN Write release notes waiting for Thomas
-NU Book venue blocked by budget approval
+Write release notes waiting for Thomas
+Book venue blocked by budget approval
 ```
 
 Recognised signals: `waiting for`, `blocked by`, `depends on`.
@@ -120,28 +110,28 @@ Recognised signals: `waiting for`, `blocked by`, `depends on`.
 
 Open `todos.html` in your browser after the first task is added.
 
-### Connecting to todos.json
+### Connecting to GitHub
 
-The first time you open the page, click **"Connect now"** in the banner at the top and select your `todos.json` file. The page remembers this connection — future visits reconnect automatically (or with a single click if browser permission needs refreshing).
+The first time you open the page, click **"Set GitHub token"** in the banner at the top and paste a GitHub Personal Access Token with repo write access. The page remembers the token — future visits reconnect automatically.
 
-> The page is **read-only until connected**. Once connected, all changes are written to `todos.json` in real time.
+> The page is **read-only until connected**. Once connected, all changes are written back to `todos.json` on GitHub in real time.
 
 ### The board
 
-- Tasks are organised into the 4 quadrants in a 2×2 grid
-- Within each quadrant, tasks are sorted by **deadline** (closest first), then by creation date for tasks without a deadline
-- A **"Due Today"** strip at the top of the page highlights everything due today, colour-coded by quadrant
+- A single sorted list of tasks
+- **Urgent** items appear first, then by **deadline** (closest first), then by creation date
+- A **"Due Today"** strip at the top of the page highlights everything due today
 - **Overdue** tasks show a red left border and an OVERDUE tag
 
 ### Interacting with tasks
 
 | Action | How |
 |---|---|
-| **Move to another quadrant** | Drag & drop the card |
 | **Mark as done** | Click the circular ✓ button (top-right of card) |
 | **Restore a done task** | Click ↩ Restore in the "Recently done" section |
-| **Delete permanently** | Click the × button (top-right of card) |
+| **Delete permanently** | Click `Delete` then confirm |
 | **Edit the title** | Double-click the title text, edit, press Enter |
+| **Toggle urgent flag** | Open the task detail and click the urgent toggle (long-press on mobile) |
 | **Remove a @mention chip** | Click the × inside the chip |
 | **Edit the deadline** | Click the deadline badge on the card |
 
@@ -152,9 +142,9 @@ The last **10 completed tasks** are shown in a "Recently done" section at the bo
 A sticky input bar at the bottom of the page lets you add and remove tasks without switching to Cursor:
 
 ```
-IU Fix the crash
-important urgent Fix the crash
-IN Write spec @Marie by friday
+Fix the crash
+! Fix the crash
+Write spec @Marie by friday
 remove velocity audit
 ```
 

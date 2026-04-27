@@ -3,8 +3,6 @@
     {
       "id": "976d8f9c-2ed6-4b3c-be61-6c1d807da244",
       "text": "Envoyer visuel par mail à Audrey avec validation interne Martin et Thomas sur usage du logo",
-      "quadrant": "IN",
-      "important": true,
       "urgent": false,
       "deadline": "2026-04-17",
       "mentions": [
@@ -17,8 +15,6 @@
     {
       "id": "3d8cfff4-c0ed-44de-a8ff-2ae3917fab29",
       "text": "Mettre lien Figma et visuels dans ticket légal de Audrey",
-      "quadrant": "IN",
-      "important": true,
       "urgent": false,
       "deadline": "2026-04-17",
       "mentions": [
@@ -31,8 +27,6 @@
     {
       "id": "557c4ed3-1fb8-46e9-8585-68aea9649303",
       "text": "Valider Logo PT Mondial",
-      "quadrant": "IN",
-      "important": true,
       "urgent": false,
       "dependency": null,
       "deadline": null,
@@ -44,8 +38,6 @@
     {
       "id": "55548004-2329-4230-b3c7-f1e74b3d8e3f",
       "text": "Envoyer dans la Tribe les retours User Research sur le Momentum",
-      "quadrant": "IN",
-      "important": true,
       "urgent": false,
       "dependency": null,
       "deadline": "2026-04-27",
@@ -57,8 +49,6 @@
     {
       "id": "039285f5-692b-4778-8cf7-822434b98448",
       "text": "Ajouter Slide Exec Sum à la presentation Bons Plans + envoyer doc dans la converion du meeting bons plans",
-      "quadrant": "IU",
-      "important": true,
       "urgent": true,
       "dependency": null,
       "deadline": "2026-04-23",
@@ -70,8 +60,6 @@
     {
       "id": "78d05758-6537-4d61-8b00-7f622da8e88e",
       "text": "COntacter Pierre D pour engager rapidement le filtrage des selections Good Deals dans Phoenix Match Details",
-      "quadrant": "IU",
-      "important": true,
       "urgent": true,
       "dependency": null,
       "deadline": "2026-04-24",
