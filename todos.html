@@ -189,17 +189,24 @@
     body.locked .cmd-send { opacity: .4; cursor: not-allowed; }
 
     /* ── Tasks list ── */
-    .matrix { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+    .matrix { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 680px) { .matrix { grid-template-columns: 1fr; } }
 
-    .task-list { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
+    .task-list { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; min-height: 140px; transition: outline .1s; }
+    .task-list.drag-over { background: color-mix(in srgb, var(--card-bg) 60%, var(--accent) 8%); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 40%, transparent); transition: background .15s, box-shadow .15s; }
+    .task-list[data-list="urgent"] { --accent: #ef4444; }
     .task-list-header { display: flex; align-items: center; gap: 9px; padding: 2px 2px 6px; }
+    .task-list-icon { font-size: 1.1rem; flex-shrink: 0; }
     .task-list-label { font-size: .82rem; font-weight: 700; color: var(--accent); letter-spacing: .01em; }
-    .task-list-count { margin-left: auto; color: #fff; font-size: .68rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--accent); }
+    .task-list-subtitle { font-size: .68rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
+    .task-list-count { margin-left: auto; color: #fff; font-size: .68rem; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--accent); }
+    .q-items { display: flex; flex-direction: column; gap: 8px; min-height: 32px; }
     .empty-state { font-size: .82rem; color: var(--muted); font-style: italic; padding: 8px 0; }
 
     /* ── Cards ── */
-    .todo-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px 8px 10px; transition: box-shadow .15s; cursor: pointer; display: flex; align-items: flex-start; gap: 8px; }
+    .todo-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px 8px 10px; transition: box-shadow .15s; cursor: grab; display: flex; align-items: flex-start; gap: 8px; }
     .todo-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.07); }
+    .todo-card.dragging { opacity: .35; cursor: grabbing; }
     .card-body { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 8px; }
     .card-main { flex: 1; min-width: 0; }
     .todo-text { font-size: .82rem; font-weight: 400; line-height: 1.5; color: var(--text); cursor: text; }
@@ -240,16 +247,6 @@
     .dl-future  { background: #eff6ff; color: #3b82f6; }
     .todo-card.is-overdue { border-left: 4px solid #ef4444; }
     .todo-card.is-urgent { border-left-color: #ef4444; }
-    .urgent-badge {
-      display: inline-flex; align-items: center; gap: 3px;
-      background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
-      font-size: .65rem; font-weight: 800; letter-spacing: .04em;
-      padding: 2px 8px; border-radius: 999px; margin-top: 6px;
-      white-space: nowrap;
-    }
-    @media (prefers-color-scheme: dark) {
-      .urgent-badge { background: rgba(239,68,68,.12); color: #fca5a5; border-color: rgba(239,68,68,.35); }
-    }
     .deadline-area { flex-direction: column; align-items: flex-end; gap: 5px; }
     .overdue-tag {
       display: inline-flex; align-items: center; gap: 4px;
@@ -1223,12 +1220,29 @@
   </section>
 
   <main class="matrix">
-    <div class="task-list" data-list="all">
+    <div class="task-list" data-list="urgent"
+         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, true)">
       <div class="task-list-header">
-        <h2 class="task-list-label">Tasks</h2>
-        <span class="task-list-count" id="taskListCount">0</span>
+        <span class="task-list-icon">🔥</span>
+        <div>
+          <h2 class="task-list-label">Do First</h2>
+          <p class="task-list-subtitle">Urgent</p>
+        </div>
+        <span class="task-list-count" id="countUrgent">0</span>
       </div>
-      <div id="items-all"></div>
+      <div class="q-items" id="items-urgent"></div>
+    </div>
+    <div class="task-list" data-list="rest"
+         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, false)">
+      <div class="task-list-header">
+        <span class="task-list-icon">📋</span>
+        <div>
+          <h2 class="task-list-label">À faire</h2>
+          <p class="task-list-subtitle">Triées par échéance</p>
+        </div>
+        <span class="task-list-count" id="countRest">0</span>
+      </div>
+      <div class="q-items" id="items-rest"></div>
     </div>
   </main>
 
@@ -1605,77 +1619,83 @@
       } catch { return iso; }
     }
 
-    function render() {
-      const active = todos.filter(t => !t.done);
-
-      // Sort: urgent first, then by deadline ascending (no deadline last), then by createdAt
-      const items = active.slice().sort((a, b) => {
-        if (!!b.urgent !== !!a.urgent) return b.urgent ? 1 : -1;
+    function _sortItems(arr) {
+      return arr.slice().sort((a, b) => {
         const aHas = !!a.deadline, bHas = !!b.deadline;
         if (aHas && bHas) return a.deadline < b.deadline ? -1 : a.deadline > b.deadline ? 1 : 0;
         if (aHas) return -1;
         if (bHas) return 1;
         return new Date(a.createdAt) - new Date(b.createdAt);
       });
+    }
 
-      const container = document.getElementById("items-all");
-      document.getElementById("taskListCount").textContent = active.length;
+    function _renderCard(item) {
+      const isOverdue = deadlineColorClass(item.deadline) === 'dl-overdue';
+      const overdueTag = isOverdue ? `
+        <div class="overdue-tag">
+          <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-5a1 1 0 00-1 1v2a1 1 0 002 0V9a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          OVERDUE
+        </div>` : '';
+      const commentCount = (item.comments && item.comments.length) ? item.comments.length : '';
+      return `
+      <div class="todo-card${isOverdue ? ' is-overdue' : ''}${item.urgent ? ' is-urgent' : ''}"
+           draggable="true"
+           data-id="${item.id}"
+           onclick="onCardClick('${item.id}', event)"
+           ondragstart="onDragStart(event, '${item.id}')"
+           ondragend="onDragEnd(event)"
+           ontouchstart="cardTouchStart(event,'${item.id}')"
+           ontouchmove="cardTouchMove(event)"
+           ontouchend="cardTouchEnd(event,'${item.id}')">
+        <div class="card-top">
+          <div class="card-actions">
+            <button class="done-btn" onclick="markDone('${item.id}')" title="Mark as done">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="card-main">
+              <p class="todo-text">${item.text}</p>
+              ${renderDepChips(item.dependency)}
+              ${renderMentionChips(item.mentions, item.id)}
+            </div>
+            <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="delete-tag" id="del-tag-${item.id}" onclick="showDeleteConfirm('${item.id}')">Delete</span>
+          <div class="delete-confirm hidden" id="del-confirm-${item.id}">
+            confirm?
+            <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
+          </div>
+          ${renderLinksCardBadge(item)}
+          <button class="comment-badge${commentCount ? ' has-comment' : ''}" onclick="openTaskModal('${item.id}')" title="Détail">
+            <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
+            ${commentCount}
+          </button>
+          <span class="meta-date" style="margin-left:auto;">created ${fmtDate(item.createdAt)}</span>
+        </div>
+      </div>`;
+    }
 
-      if (items.length === 0) {
-        container.innerHTML = '<p class="empty-state">No tasks here.</p>';
-      } else {
-        container.innerHTML = items.map(item => {
-          const isOverdue = deadlineColorClass(item.deadline) === 'dl-overdue';
-          const overdueTag = isOverdue ? `
-            <div class="overdue-tag">
-              <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-5a1 1 0 00-1 1v2a1 1 0 002 0V9a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-              OVERDUE
-            </div>` : '';
-          const urgentBadge = item.urgent
-            ? `<span class="urgent-badge" title="Urgent">🔥 Urgent</span>`
-            : '';
-          const commentCount = (item.comments && item.comments.length) ? item.comments.length : '';
-          return `
-          <div class="todo-card${isOverdue ? ' is-overdue' : ''}${item.urgent ? ' is-urgent' : ''}"
-               data-id="${item.id}"
-               onclick="onCardClick('${item.id}', event)"
-               ontouchstart="cardTouchStart(event,'${item.id}')"
-               ontouchmove="cardTouchMove(event)"
-               ontouchend="cardTouchEnd(event,'${item.id}')">
-            <div class="card-top">
-              <div class="card-actions">
-                <button class="done-btn" onclick="markDone('${item.id}')" title="Mark as done">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6l3 3 5-5" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-              <div class="card-body">
-                <div class="card-main">
-                  <p class="todo-text">${item.text}</p>
-                  ${urgentBadge}
-                  ${renderDepChips(item.dependency)}
-                  ${renderMentionChips(item.mentions, item.id)}
-                </div>
-                <div class="deadline-area" id="dl-${item.id}">${renderDeadlineBadge(item)}${overdueTag}</div>
-              </div>
-            </div>
-            <div class="card-footer">
-              <span class="delete-tag" id="del-tag-${item.id}" onclick="showDeleteConfirm('${item.id}')">Delete</span>
-              <div class="delete-confirm hidden" id="del-confirm-${item.id}">
-                confirm?
-                <button class="btn-yes" onclick="confirmDelete('${item.id}')">✓</button>
-              </div>
-              ${renderLinksCardBadge(item)}
-              <button class="comment-badge${commentCount ? ' has-comment' : ''}" onclick="openTaskModal('${item.id}')" title="Détail">
-                <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/></svg>
-                ${commentCount}
-              </button>
-              <span class="meta-date" style="margin-left:auto;">created ${fmtDate(item.createdAt)}</span>
-            </div>
-          </div>`;
-        }).join("");
-      }
+    function render() {
+      const active = todos.filter(t => !t.done);
+      const urgent = _sortItems(active.filter(t => t.urgent));
+      const rest   = _sortItems(active.filter(t => !t.urgent));
+
+      const urgentEl = document.getElementById("items-urgent");
+      const restEl   = document.getElementById("items-rest");
+      document.getElementById("countUrgent").textContent = urgent.length;
+      document.getElementById("countRest").textContent   = rest.length;
+
+      urgentEl.innerHTML = urgent.length
+        ? urgent.map(_renderCard).join("")
+        : '<p class="empty-state">Drop a task here to mark it urgent.</p>';
+      restEl.innerHTML = rest.length
+        ? rest.map(_renderCard).join("")
+        : '<p class="empty-state">No tasks here.</p>';
 
       document.getElementById("totalBadge").textContent = active.length + " active";
       const mnavBadge = document.getElementById('mnavBadge');
@@ -1729,9 +1749,59 @@
     }
 
     // ── Card click ───────────────────────────────────────────────────────────
+    let _dragId = null;
+    let _dragSourceList = null;
+    let _dragging = false;
+
     function onCardClick(id, e) {
+      if (_dragging) return;
       if (e.target.closest('button, input, textarea, .delete-tag, .delete-confirm, .deadline-area')) return;
       openTaskModal(id);
+    }
+
+    // ── Drag & Drop (move between Do First / À faire) ────────────────────────
+    function onDragStart(e, id) {
+      if (!isConnected) { e.preventDefault(); return; }
+      _dragging = true;
+      _dragId = id;
+      e.dataTransfer.effectAllowed = "move";
+      _dragSourceList = e.target.closest('.task-list');
+      setTimeout(() => e.target.classList.add("dragging"), 0);
+    }
+
+    function onDragEnd(e) {
+      e.target.classList.remove("dragging");
+      document.querySelectorAll(".task-list").forEach(q => q.classList.remove("drag-over"));
+      _dragSourceList = null;
+      setTimeout(() => { _dragging = false; }, 0);
+    }
+
+    function onDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      const q = e.currentTarget;
+      if (q === _dragSourceList) return;
+      document.querySelectorAll(".task-list").forEach(el => { if (el !== q) el.classList.remove("drag-over"); });
+      q.classList.add("drag-over");
+    }
+
+    function onDragLeave(e) {
+      if (!e.currentTarget.contains(e.relatedTarget)) {
+        e.currentTarget.classList.remove("drag-over");
+      }
+    }
+
+    function onDrop(e, urgent) {
+      e.preventDefault();
+      e.currentTarget.classList.remove("drag-over");
+      if (!_dragId) return;
+      const item = todos.find(t => t.id === _dragId);
+      if (item && !!item.urgent !== !!urgent) {
+        item.urgent = !!urgent;
+        render();
+        persistState();
+      }
+      _dragId = null;
     }
 
     // ── Done / Delete / Restore ──────────────────────────────────────────────
