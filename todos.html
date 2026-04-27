@@ -122,8 +122,7 @@
 
     /* Elements that must sit above background pseudo-elements */
     .page-header, .matrix, .cmd-bar, .task-modal-overlay, .connect-banner,
-    .recently-done, .due-today, .axis-labels, .mobile-tabs, .move-menu-overlay,
-    .date-picker-popup {
+    .recently-done, .due-today, .date-picker-popup {
       position: relative;
       z-index: 1;
     }
@@ -189,29 +188,18 @@
     body.locked .cmd-input { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
     body.locked .cmd-send { opacity: .4; cursor: not-allowed; }
 
-    /* ── Axis labels ── */
-    .axis-labels { max-width: 1100px; margin: 0 auto 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .axis-label { text-align: center; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    /* ── Tasks list ── */
+    .matrix { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
 
-    /* ── Matrix ── */
-    .matrix { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 680px) { .matrix { grid-template-columns: 1fr; } }
-
-    /* ── Quadrant ── */
-    .quadrant { background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; transition: outline .1s; min-height: 140px; }
-    .quadrant.drag-over { background: color-mix(in srgb, var(--bg) 60%, var(--accent) 8%); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 40%, transparent); transition: background .15s, box-shadow .15s; }
-    .q-header { display: flex; align-items: center; gap: 9px; }
-    .q-icon { font-size: 1.1rem; flex-shrink: 0; }
-    .q-label { font-size: .82rem; font-weight: 700; color: var(--accent); letter-spacing: .01em; }
-    .q-subtitle { font-size: .68rem; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; }
-    .q-count { margin-left: auto; color: #fff; font-size: .68rem; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .q-items { display: flex; flex-direction: column; gap: 8px; min-height: 32px; }
+    .task-list { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 8px; min-height: 60px; }
+    .task-list-header { display: flex; align-items: center; gap: 9px; padding: 2px 2px 6px; }
+    .task-list-label { font-size: .82rem; font-weight: 700; color: var(--accent); letter-spacing: .01em; }
+    .task-list-count { margin-left: auto; color: #fff; font-size: .68rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; background: var(--accent); }
     .empty-state { font-size: .82rem; color: var(--muted); font-style: italic; padding: 8px 0; }
 
     /* ── Cards ── */
-    .todo-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px 8px 10px; transition: box-shadow .15s; cursor: grab; display: flex; align-items: flex-start; gap: 8px; }
+    .todo-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; padding: 10px 12px 8px 10px; transition: box-shadow .15s; cursor: pointer; display: flex; align-items: flex-start; gap: 8px; }
     .todo-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.07); }
-    .todo-card.dragging { opacity: .35; cursor: grabbing; }
     .card-body { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 8px; }
     .card-main { flex: 1; min-width: 0; }
     .todo-text { font-size: .82rem; font-weight: 400; line-height: 1.5; color: var(--text); cursor: text; }
@@ -251,6 +239,17 @@
     .dl-soon    { background: #fffbeb; color: #b45309; }
     .dl-future  { background: #eff6ff; color: #3b82f6; }
     .todo-card.is-overdue { border-left: 4px solid #ef4444; }
+    .todo-card.is-urgent { border-left-color: #ef4444; }
+    .urgent-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: #fef2f2; color: #dc2626; border: 1px solid #fecaca;
+      font-size: .65rem; font-weight: 800; letter-spacing: .04em;
+      padding: 2px 8px; border-radius: 999px; margin-top: 6px;
+      white-space: nowrap;
+    }
+    @media (prefers-color-scheme: dark) {
+      .urgent-badge { background: rgba(239,68,68,.12); color: #fca5a5; border-color: rgba(239,68,68,.35); }
+    }
     .deadline-area { flex-direction: column; align-items: flex-end; gap: 5px; }
     .overdue-tag {
       display: inline-flex; align-items: center; gap: 4px;
@@ -325,6 +324,14 @@
     .task-modal-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .task-modal-badge { font-size: .65rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: #fff; letter-spacing: .03em; }
     .task-modal-created { font-size: .68rem; color: #9ca3af; }
+    .task-modal-urgent-toggle {
+      font-family: var(--font); font-size: .68rem; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px;
+      border: 1.5px solid #fecaca; background: #fef2f2; color: #dc2626;
+      cursor: pointer; transition: all .12s;
+    }
+    .task-modal-urgent-toggle.on { background: #dc2626; color: #fff; border-color: #dc2626; }
+    .task-modal-urgent-toggle:hover { opacity: .85; }
     .task-modal-section { display: flex; flex-direction: column; gap: 7px; }
     .task-modal-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
     .task-modal-mentions { display: flex; flex-wrap: wrap; gap: 5px; min-height: 0; }
@@ -580,46 +587,6 @@
     .cmd-feedback.success { color: #22c55e; }
     .cmd-feedback.info { color: #3b82f6; }
 
-    /* ── Mobile tab bar ── */
-    .mobile-tabs {
-      display: none;
-      position: sticky; top: 0; z-index: 50;
-      background: var(--page-bg);
-      padding: 8px 0 10px;
-      margin: 0 -12px 12px;
-    }
-    .mobile-filter-btn {
-      display: flex; align-items: center; justify-content: space-between;
-      width: calc(100% - 24px); margin: 0 12px;
-      font-family: var(--font); font-size: .82rem; font-weight: 600;
-      padding: 10px 16px; border-radius: 12px;
-      border: 1.5px solid var(--border); background: var(--card-bg); color: var(--text);
-      cursor: pointer; transition: border-color .15s;
-    }
-    .mobile-filter-btn:active { border-color: var(--accent); }
-    .mobile-filter-chevron { font-size: .75rem; color: var(--muted); }
-    .filter-sheet-options { display: flex; flex-direction: column; gap: 6px; }
-    .filter-opt {
-      font-family: var(--font); font-size: .88rem; font-weight: 600;
-      padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--border);
-      background: var(--input-bg); color: var(--text);
-      text-align: left; cursor: pointer; transition: all .12s;
-    }
-    .filter-opt:active { border-color: var(--accent); background: var(--card-bg); }
-    .filter-opt.active  { border-color: var(--accent); color: var(--accent); background: var(--card-bg); }
-
-    /* ── Move-to overlay (mobile long press) ── */
-    .move-menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 500; display: flex; align-items: flex-end; }
-    .move-menu-overlay.hidden { display: none; }
-    .move-menu { width: 100%; background: #fff; border-radius: 20px 20px 0 0; padding: 20px 20px 36px; display: flex; flex-direction: column; gap: 14px; animation: slideUpSheet .2s ease; }
-    .move-menu-title { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); text-align: center; }
-    .move-menu-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .move-option { font-family: var(--font); font-size: .8rem; font-weight: 700; padding: 16px 10px; border-radius: 14px; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 5px; color: #fff; transition: opacity .1s; }
-    .move-option:active { opacity: .75; }
-    .move-option .mo-icon { font-size: 1.4rem; }
-    .move-option .mo-label { font-size: .65rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
-    .move-menu-cancel { font-family: var(--font); font-size: .82rem; font-weight: 600; padding: 14px; border-radius: 14px; border: 1.5px solid #e5e7eb; background: #fff; color: var(--muted); cursor: pointer; }
-
     @keyframes slideUpSheet { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
     /* ── Responsive mobile ── */
@@ -642,14 +609,10 @@
       .due-today-card .due-text { overflow: hidden; }
       .due-today-card .due-text > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-      .axis-labels { display: none; }
-
       .matrix { gap: 10px; }
-      .quadrant { padding: 12px 10px; gap: 10px; border-radius: 10px; }
-      .q-header { gap: 7px; }
-      .q-icon { font-size: 1rem; }
-      .q-label { font-size: .78rem; }
-      .q-subtitle { font-size: .63rem; }
+      .task-list { padding: 12px 10px; gap: 10px; border-radius: 10px; }
+      .task-list-header { gap: 7px; }
+      .task-list-label { font-size: .78rem; }
 
       .todo-card { border-radius: 7px; padding: 9px 10px 7px 8px; }
       .todo-text { font-size: .88rem; }
@@ -681,8 +644,6 @@
       .link-type-btn { font-size: .7rem; padding: 4px 9px; }
       .task-modal-input-sm { width: 120px; }
 
-      .mobile-tabs { display: block; }
-
       .todo-card.swipe-right { background: #f0fdf4 !important; }
       .todo-card.swipe-left  { background: #fef2f2 !important; }
     }
@@ -705,7 +666,7 @@
       transform: translateY(-2px);
     }
 
-    .quadrant {
+    .task-list {
       border-top: 3px solid var(--accent);
       background: #ffffff;
       box-shadow: 0 2px 12px rgba(99,102,241,.06), 0 1px 4px rgba(0,0,0,.04);
@@ -757,17 +718,13 @@
       .todo-card.swipe-right { background: rgba(34,197,94,.08) !important; }
       .todo-card.swipe-left  { background: rgba(239,68,68,.08) !important; }
 
-      /* Quadrants */
-      .quadrant {
+      /* Task list */
+      .task-list {
         background: color-mix(in srgb, var(--accent) 9%, #0c1020 91%) !important;
         border-color: color-mix(in srgb, var(--accent) 22%, transparent) !important;
         box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 8%, transparent),
                     inset 0 1px 0 color-mix(in srgb, var(--accent) 15%, transparent);
         border-top: 3px solid var(--accent);
-      }
-      .quadrant.drag-over {
-        box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 50%, transparent),
-                    0 0 40px color-mix(in srgb, var(--accent) 12%, transparent);
       }
 
       /* Header & badges */
@@ -886,28 +843,6 @@
         0%   { opacity: 0; transform: translateY(-6px) scale(.98); background: rgba(34,197,94,.08); }
         60%  { background: rgba(34,197,94,.12); }
         100% { opacity: 1; transform: translateY(0) scale(1); background: rgba(255,255,255,.04); }
-      }
-
-      /* Mobile tabs */
-      .mobile-tabs { background: var(--page-bg); }
-      .mtab {
-        background: rgba(255,255,255,.05);
-        border-color: rgba(255,255,255,.1);
-        color: var(--muted);
-      }
-      .mtab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-      /* Move menu overlay */
-      .move-menu-overlay { background: rgba(0,0,0,.65); }
-      .move-menu {
-        background: #0e1525;
-        border: 1px solid rgba(255,255,255,.1);
-      }
-      .move-menu-title { color: var(--muted); }
-      .move-menu-cancel {
-        background: rgba(255,255,255,.05);
-        border-color: rgba(255,255,255,.1);
-        color: var(--muted);
       }
 
       /* Date picker popup */
@@ -1036,8 +971,6 @@
       body:not(.mobile-board) .page-header,
       body:not(.mobile-board) .connect-banner,
       body:not(.mobile-board) .due-today,
-      body:not(.mobile-board) .axis-labels,
-      body:not(.mobile-board) .mobile-tabs,
       body:not(.mobile-board) .matrix,
       body:not(.mobile-board) .recently-done,
       body:not(.mobile-board) .cmd-bar { display: none !important; }
@@ -1046,9 +979,8 @@
 
       /* Board mode overrides */
       body.mobile-board #mobileCaptureScreen { display: none !important; }
-      body.mobile-board .matrix      { display: grid   !important; }
-      body.mobile-board .mobile-tabs { display: block  !important; }
-      body.mobile-board .page-header { display: flex   !important; }
+      body.mobile-board .matrix      { display: flex !important; }
+      body.mobile-board .page-header { display: flex !important; }
       body.mobile-board .recently-done { display: block !important; }
 
       /* Capture screen */
@@ -1109,21 +1041,18 @@
         letter-spacing: .08em; color: var(--muted);
       }
 
-      /* Quadrant picker */
-      .mcs-q-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      /* Urgent toggle */
+      .mcs-q-row { display: flex; gap: 8px; }
       .mcs-q-btn {
-        display: flex; flex-direction: column; align-items: center; gap: 5px;
-        padding: 12px 8px; border-radius: 14px;
+        display: flex; flex-direction: row; align-items: center; gap: 8px;
+        padding: 10px 16px; border-radius: 999px;
         border: 2px solid var(--border); background: var(--input-bg);
         color: var(--muted); font-family: var(--font);
-        font-size: .72rem; font-weight: 700; cursor: pointer;
+        font-size: .82rem; font-weight: 700; cursor: pointer;
         transition: all .15s; line-height: 1;
       }
-      .mcs-q-icon { font-size: 1.25rem; }
-      .mcs-q-btn[data-q="IU"].active { background: #fef2f2; border-color: #ef4444; color: #ef4444; }
-      .mcs-q-btn[data-q="IN"].active { background: #eff6ff; border-color: #3b82f6; color: #3b82f6; }
-      .mcs-q-btn[data-q="NU"].active { background: #fff7ed; border-color: #f97316; color: #f97316; }
-      .mcs-q-btn[data-q="NN"].active { background: #f4f4f5; border-color: #6b7280; color: #6b7280; }
+      .mcs-q-icon { font-size: 1.05rem; }
+      .mcs-q-btn.active { background: #fef2f2; border-color: #ef4444; color: #ef4444; }
 
       /* Task textarea */
       .mcs-task-input {
@@ -1196,10 +1125,7 @@
     }
 
     @media (max-width: 680px) and (prefers-color-scheme: dark) {
-      .mcs-q-btn[data-q="IU"].active { background: rgba(239,68,68,.15); }
-      .mcs-q-btn[data-q="IN"].active { background: rgba(59,130,246,.15); }
-      .mcs-q-btn[data-q="NU"].active { background: rgba(249,115,22,.15); }
-      .mcs-q-btn[data-q="NN"].active { background: rgba(107,114,128,.15); }
+      .mcs-q-btn.active { background: rgba(239,68,68,.15); }
       .mcs-chip { background: rgba(139,92,246,.2); color: #a78bfa; }
       .mcs-chip-remove { color: #a78bfa; }
       .mcs-date-btn.selected { background: rgba(139,92,246,.2); border-color: #7c3aed; color: #a78bfa; }
@@ -1220,10 +1146,9 @@
     <div class="mcs-section">
       <div class="mcs-label">Priorité</div>
       <div class="mcs-q-row">
-        <button class="mcs-q-btn active" data-q="IU" onclick="mcSetQ('IU')"><span class="mcs-q-icon">🔥</span><span>Do First</span></button>
-        <button class="mcs-q-btn"        data-q="IN" onclick="mcSetQ('IN')"><span class="mcs-q-icon">📅</span><span>Schedule</span></button>
-        <button class="mcs-q-btn"        data-q="NU" onclick="mcSetQ('NU')"><span class="mcs-q-icon">🤝</span><span>Delegate</span></button>
-        <button class="mcs-q-btn"        data-q="NN" onclick="mcSetQ('NN')"><span class="mcs-q-icon">🗑</span><span>Eliminate</span></button>
+        <button class="mcs-q-btn" id="mcUrgentBtn" onclick="mcToggleUrgent()">
+          <span class="mcs-q-icon">🔥</span><span>Urgent</span>
+        </button>
       </div>
     </div>
 
@@ -1297,87 +1222,13 @@
     <div class="due-today-list" id="dueTodayList"></div>
   </section>
 
-  <div class="axis-labels">
-    <div class="axis-label">⬅ Urgent</div>
-    <div class="axis-label">Not Urgent ➡</div>
-  </div>
-
-  <!-- Mobile filter bar -->
-  <div class="mobile-tabs" id="mobileTabs">
-    <button class="mobile-filter-btn" id="mobileFilterBtn" onclick="openFilterSheet()">
-      <span id="mobileFilterLabel">Toutes les tâches</span>
-      <span class="mobile-filter-chevron">▾</span>
-    </button>
-  </div>
-
-  <!-- Filter bottom sheet -->
-  <div class="move-menu-overlay hidden" id="filterSheetOverlay" onclick="closeFilterSheet()">
-    <div class="move-menu" onclick="event.stopPropagation()">
-      <div class="move-menu-title">Afficher</div>
-      <div class="filter-sheet-options">
-        <button class="filter-opt" data-q=""   onclick="applyFilter(null)">📋 Toutes les tâches</button>
-        <button class="filter-opt" data-q="IU" onclick="applyFilter('IU')">🔥 Do First — Important · Urgent</button>
-        <button class="filter-opt" data-q="IN" onclick="applyFilter('IN')">📅 Schedule — Important · Not Urgent</button>
-        <button class="filter-opt" data-q="NU" onclick="applyFilter('NU')">🤝 Delegate — Not Important · Urgent</button>
-        <button class="filter-opt" data-q="NN" onclick="applyFilter('NN')">🗑 Eliminate — Not Important · Not Urgent</button>
-      </div>
-      <button class="move-menu-cancel" onclick="closeFilterSheet()">Annuler</button>
-    </div>
-  </div>
-
   <main class="matrix">
-    
-    <div class="quadrant" data-quadrant="IU"
-         style="--accent:#ef4444;--bg:#fef2f2;--border:#fca5a5;"
-         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'IU')">
-      <div class="q-header">
-        <span class="q-icon">🔥</span>
-        <div>
-          <h2 class="q-label">Do First</h2>
-          <p class="q-subtitle">Important · Urgent</p>
-        </div>
-        <span class="q-count" id="count-IU" style="background:#ef4444;">0</span>
+    <div class="task-list" data-list="all">
+      <div class="task-list-header">
+        <h2 class="task-list-label">Tasks</h2>
+        <span class="task-list-count" id="taskListCount">0</span>
       </div>
-      <div class="q-items" id="items-IU"></div>
-    </div>
-    <div class="quadrant" data-quadrant="IN"
-         style="--accent:#3b82f6;--bg:#eff6ff;--border:#93c5fd;"
-         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'IN')">
-      <div class="q-header">
-        <span class="q-icon">📅</span>
-        <div>
-          <h2 class="q-label">Schedule</h2>
-          <p class="q-subtitle">Important · Not Urgent</p>
-        </div>
-        <span class="q-count" id="count-IN" style="background:#3b82f6;">0</span>
-      </div>
-      <div class="q-items" id="items-IN"></div>
-    </div>
-    <div class="quadrant" data-quadrant="NU"
-         style="--accent:#f97316;--bg:#fff7ed;--border:#fdba74;"
-         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'NU')">
-      <div class="q-header">
-        <span class="q-icon">🤝</span>
-        <div>
-          <h2 class="q-label">Delegate</h2>
-          <p class="q-subtitle">Not Important · Urgent</p>
-        </div>
-        <span class="q-count" id="count-NU" style="background:#f97316;">0</span>
-      </div>
-      <div class="q-items" id="items-NU"></div>
-    </div>
-    <div class="quadrant" data-quadrant="NN"
-         style="--accent:#6b7280;--bg:#f9fafb;--border:#d1d5db;"
-         ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event, 'NN')">
-      <div class="q-header">
-        <span class="q-icon">🗑</span>
-        <div>
-          <h2 class="q-label">Eliminate</h2>
-          <p class="q-subtitle">Not Important · Not Urgent</p>
-        </div>
-        <span class="q-count" id="count-NN" style="background:#6b7280;">0</span>
-      </div>
-      <div class="q-items" id="items-NN"></div>
+      <div id="items-all"></div>
     </div>
   </main>
 
@@ -1389,28 +1240,6 @@
     <div class="done-list" id="doneList"></div>
   </section>
 
-
-  <!-- Move-to overlay (mobile) -->
-  <div class="move-menu-overlay hidden" id="moveMenuOverlay" onclick="closeMoveMenu()">
-    <div class="move-menu" onclick="event.stopPropagation()">
-      <div class="move-menu-title">Déplacer vers…</div>
-      <div class="move-menu-options">
-        <button class="move-option" style="background:#ef4444;" onclick="moveTaskTo('IU')">
-          <span class="mo-icon">🔥</span><span class="mo-label">Do First</span>
-        </button>
-        <button class="move-option" style="background:#3b82f6;" onclick="moveTaskTo('IN')">
-          <span class="mo-icon">📅</span><span class="mo-label">Schedule</span>
-        </button>
-        <button class="move-option" style="background:#f97316;" onclick="moveTaskTo('NU')">
-          <span class="mo-icon">🤝</span><span class="mo-label">Delegate</span>
-        </button>
-        <button class="move-option" style="background:#6b7280;" onclick="moveTaskTo('NN')">
-          <span class="mo-icon">🗑</span><span class="mo-label">Eliminate</span>
-        </button>
-      </div>
-      <button class="move-menu-cancel" onclick="closeMoveMenu()">Annuler</button>
-    </div>
-  </div>
 
   <!-- Task detail modal -->
   <div class="task-modal-overlay hidden" id="taskModalOverlay" onclick="closeTaskModal()">
@@ -1476,12 +1305,12 @@
     <div class="cmd-bar-inner">
       <div class="mention-preview" id="mentionPreview"></div>
       <div class="cmd-hint" id="cmdHint">
-        <strong>IU · IN · NU · NN</strong> [task] &nbsp;·&nbsp; <strong>important urgent</strong> [task] &nbsp;·&nbsp; <strong>remove</strong> [keyword]
+        Type a task &nbsp;·&nbsp; prefix with <strong>!</strong> or include <strong>urgent</strong> to flag it &nbsp;·&nbsp; <strong>remove</strong> [keyword]
         &nbsp;·&nbsp; add dependency: include <em>"waiting for X"</em> or <em>"blocked by X"</em> in your text
       </div>
       <div class="cmd-row">
         <input class="cmd-input" id="cmdInput" type="text"
-               placeholder="IU Finish roadmap deck   ·   important urgent Finish roadmap deck   ·   remove velocity"
+               placeholder="Finish roadmap deck   ·   ! Fix the crash   ·   remove velocity"
                onfocus="showHint()" onblur="hideHint()"
                onkeydown="if(event.key==='Enter') runCommand()" />
         <span class="cmd-date-tag" id="cmdDateTag">
@@ -1504,9 +1333,18 @@
     const LS_SHA_KEY   = 'jm_todos_sha';
 
     // ── Data ────────────────────────────────────────────────────────────────
-    const GENERATED_AT = "2026-03-06T10:51:53.512814+00:00";       // timestamp of last Cursor-agent regeneration
-    const LS_KEY     = "jm_todos";
-    const LS_GEN_KEY = "jm_todos_gen";
+    const GENERATED_AT = "2026-04-27T00:00:00.000000+00:00";       // timestamp of last Cursor-agent regeneration
+    const LS_KEY            = "jm_todos";
+    const LS_GEN_KEY        = "jm_todos_gen";        // timestamp of last local mutation
+    const LS_LAST_SAVED_KEY = "jm_todos_last_saved"; // timestamp of last successful GitHub save
+
+    // Returns true when localStorage holds changes that haven't reached GitHub yet.
+    function hasUnsavedChanges() {
+      const gen   = localStorage.getItem(LS_GEN_KEY);
+      const saved = localStorage.getItem(LS_LAST_SAVED_KEY);
+      if (!gen) return false;
+      return !saved || gen > saved;
+    }
 
     // Embedded snapshot (written by Cursor agent / generate_html.py)
     const embeddedTodos = [];
@@ -1521,19 +1359,27 @@
         const storedGen = localStorage.getItem(LS_GEN_KEY);
         if (storedRaw && storedGen && storedGen >= GENERATED_AT) {
           todos = JSON.parse(storedRaw);
+          // Backfill LS_LAST_SAVED_KEY for users upgrading from before the dirty-tracking
+          // logic existed: assume their state is already in sync with GitHub.
+          if (!localStorage.getItem(LS_LAST_SAVED_KEY)) {
+            localStorage.setItem(LS_LAST_SAVED_KEY, storedGen);
+          }
           return;
         }
       } catch (e) {
         // corrupt localStorage — fall through to embedded
       }
-      // Embedded data is newer (or no localStorage yet) — use it and seed localStorage
+      // Embedded data is newer (or no localStorage yet) — use it and seed localStorage.
+      // Mark it as "saved" too: it's a clean snapshot, so a subsequent fetch from
+      // GitHub is allowed to overwrite it. Once the user mutates, LS_GEN_KEY moves
+      // past LS_LAST_SAVED_KEY → hasUnsavedChanges() flips to true.
       todos = embeddedTodos;
       localStorage.setItem(LS_KEY, JSON.stringify(todos));
       localStorage.setItem(LS_GEN_KEY, GENERATED_AT);
+      localStorage.setItem(LS_LAST_SAVED_KEY, GENERATED_AT);
     })();
 
     let isConnected = false;
-    let dragId = null;
 
     // ── GitHub API helpers ────────────────────────────────────────────────────
     function ghHeaders() {
@@ -1550,7 +1396,10 @@
         updateConnectionUI();
       }
 
-      // 2. Fetch latest todos.json — via API (gets fresh SHA) if token exists, else via raw URL
+      // If localStorage has unsaved changes, GitHub is older than our local state.
+      // Don't overwrite — push the local changes up instead.
+      const dirty = hasUnsavedChanges();
+
       try {
         if (token) {
           // API fetch keeps SHA in sync → saves won't fail with stale SHA
@@ -1559,24 +1408,39 @@
           if (r.ok) {
             const meta = await r.json();
             localStorage.setItem(LS_SHA_KEY, meta.sha);
-            const decoded = decodeURIComponent(escape(atob(meta.content.replace(/\n/g, ''))));
-            const data = JSON.parse(decoded);
-            todos = data.todos || [];
-            localStorage.setItem(LS_KEY, JSON.stringify(todos));
-            localStorage.setItem(LS_GEN_KEY, new Date().toISOString());
-            render();
+            if (!dirty) {
+              const decoded = decodeURIComponent(escape(atob(meta.content.replace(/\n/g, ''))));
+              const data = JSON.parse(decoded);
+              todos = data.todos || [];
+              if (migrateLegacyShape()) { /* normalised in-memory */ }
+              localStorage.setItem(LS_KEY, JSON.stringify(todos));
+              const stamp = new Date().toISOString();
+              localStorage.setItem(LS_GEN_KEY, stamp);
+              localStorage.setItem(LS_LAST_SAVED_KEY, stamp);
+              render();
+            } else {
+              // Local has unsaved changes — push them up (uses the freshly fetched SHA)
+              await saveToFile();
+              render();
+            }
             return;
           }
         }
-        // Fallback: raw URL (no auth, no SHA update)
-        const rawUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
-        const r = await fetch(rawUrl);
-        if (r.ok) {
-          const data = await r.json();
-          todos = data.todos || [];
-          localStorage.setItem(LS_KEY, JSON.stringify(todos));
-          localStorage.setItem(LS_GEN_KEY, new Date().toISOString());
-          render();
+        // Fallback: raw URL (no auth, no SHA update). Only use it when we don't risk
+        // clobbering local edits.
+        if (!dirty) {
+          const rawUrl = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}?t=${Date.now()}`;
+          const r = await fetch(rawUrl);
+          if (r.ok) {
+            const data = await r.json();
+            todos = data.todos || [];
+            if (migrateLegacyShape()) { /* normalised in-memory */ }
+            localStorage.setItem(LS_KEY, JSON.stringify(todos));
+            const stamp = new Date().toISOString();
+            localStorage.setItem(LS_GEN_KEY, stamp);
+            localStorage.setItem(LS_LAST_SAVED_KEY, stamp);
+            render();
+          }
         }
       } catch (_) { /* offline — keep localStorage data */ }
     }
@@ -1603,12 +1467,30 @@
       }
     }
 
-    const QUADRANT_META = {
-      IU: { label: "Do First",  accent: "#ef4444" },
-      IN: { label: "Schedule",  accent: "#3b82f6" },
-      NU: { label: "Delegate",  accent: "#f97316" },
-      NN: { label: "Eliminate", accent: "#6b7280" },
-    };
+    const URGENT_ACCENT = "#ef4444";
+    const NORMAL_ACCENT = "#6366f1";
+
+    function urgencyMeta(item) {
+      return item.urgent
+        ? { label: "Urgent", accent: URGENT_ACCENT }
+        : { label: "Task",   accent: NORMAL_ACCENT };
+    }
+
+    function migrateLegacyShape() {
+      // Convert old quadrant-based items to the simple { urgent } shape.
+      // Old quadrants: IU/NU = urgent, IN/NN = not urgent.
+      let changed = false;
+      for (const t of todos) {
+        if (typeof t.urgent !== 'boolean') {
+          const q = t.quadrant;
+          t.urgent = q === 'IU' || q === 'NU';
+          changed = true;
+        }
+        if ('quadrant' in t)   { delete t.quadrant;   changed = true; }
+        if ('important' in t)  { delete t.important;  changed = true; }
+      }
+      return changed;
+    }
 
     const LINK_TYPES = {
       waiting_for: { label: 'En attente',  icon: '⏳', color: '#ea580c' },
@@ -1631,7 +1513,7 @@
         status.title = "Connected to GitHub";
         banner.classList.add("hidden");
         document.body.classList.remove("locked");
-        input.placeholder = "IU Finish roadmap deck   ·   remove velocity";
+        input.placeholder = "Finish roadmap deck   ·   ! Fix the crash   ·   remove velocity";
         input.disabled = false;
         document.getElementById("cmdSend").disabled = false;
       } else {
@@ -1679,6 +1561,11 @@
         } catch (e) { console.warn('SHA fetch failed:', e); return; }
       }
 
+      // Snapshot the local generation timestamp at save start. If a new mutation
+      // happens while this PUT is in flight, the snapshot will be older than the
+      // post-save LS_GEN_KEY → hasUnsavedChanges() will still report dirty. That
+      // prevents marking the local state as fully synced when newer edits arrived.
+      const genAtSave = localStorage.getItem(LS_GEN_KEY);
       try {
         const body = JSON.stringify({ todos }, null, 2);
         const content = btoa(unescape(encodeURIComponent(body)));
@@ -1690,6 +1577,7 @@
         if (r.ok) {
           const data = await r.json();
           localStorage.setItem(LS_SHA_KEY, data.content.sha);
+          if (genAtSave) localStorage.setItem(LS_LAST_SAVED_KEY, genAtSave);
           flashSaved();
         } else {
           // SHA might be stale — clear it so next save refetches
@@ -1719,24 +1607,23 @@
 
     function render() {
       const active = todos.filter(t => !t.done);
-      const counts = { IU: 0, IN: 0, NU: 0, NN: 0 };
-      active.forEach(t => { if (counts[t.quadrant] !== undefined) counts[t.quadrant]++; });
 
-      ["IU","IN","NU","NN"].forEach(q => {
-        const items = active.filter(t => t.quadrant === q).sort((a, b) => {
-          const aHas = !!a.deadline, bHas = !!b.deadline;
-          if (aHas && bHas) return a.deadline < b.deadline ? -1 : a.deadline > b.deadline ? 1 : 0;
-          if (aHas) return -1;
-          if (bHas) return 1;
-          return new Date(a.createdAt) - new Date(b.createdAt);
-        });
-        const container = document.getElementById("items-" + q);
-        document.getElementById("count-" + q).textContent = counts[q];
+      // Sort: urgent first, then by deadline ascending (no deadline last), then by createdAt
+      const items = active.slice().sort((a, b) => {
+        if (!!b.urgent !== !!a.urgent) return b.urgent ? 1 : -1;
+        const aHas = !!a.deadline, bHas = !!b.deadline;
+        if (aHas && bHas) return a.deadline < b.deadline ? -1 : a.deadline > b.deadline ? 1 : 0;
+        if (aHas) return -1;
+        if (bHas) return 1;
+        return new Date(a.createdAt) - new Date(b.createdAt);
+      });
 
-        if (items.length === 0) {
-          container.innerHTML = '<p class="empty-state">No tasks here.</p>';
-          return;
-        }
+      const container = document.getElementById("items-all");
+      document.getElementById("taskListCount").textContent = active.length;
+
+      if (items.length === 0) {
+        container.innerHTML = '<p class="empty-state">No tasks here.</p>';
+      } else {
         container.innerHTML = items.map(item => {
           const isOverdue = deadlineColorClass(item.deadline) === 'dl-overdue';
           const overdueTag = isOverdue ? `
@@ -1744,14 +1631,14 @@
               <svg width="11" height="11" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-5a1 1 0 00-1 1v2a1 1 0 002 0V9a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
               OVERDUE
             </div>` : '';
+          const urgentBadge = item.urgent
+            ? `<span class="urgent-badge" title="Urgent">🔥 Urgent</span>`
+            : '';
           const commentCount = (item.comments && item.comments.length) ? item.comments.length : '';
           return `
-          <div class="todo-card${isOverdue ? ' is-overdue' : ''}"
-               draggable="true"
+          <div class="todo-card${isOverdue ? ' is-overdue' : ''}${item.urgent ? ' is-urgent' : ''}"
                data-id="${item.id}"
                onclick="onCardClick('${item.id}', event)"
-               ondragstart="onDragStart(event, '${item.id}')"
-               ondragend="onDragEnd(event)"
                ontouchstart="cardTouchStart(event,'${item.id}')"
                ontouchmove="cardTouchMove(event)"
                ontouchend="cardTouchEnd(event,'${item.id}')">
@@ -1766,6 +1653,7 @@
               <div class="card-body">
                 <div class="card-main">
                   <p class="todo-text">${item.text}</p>
+                  ${urgentBadge}
                   ${renderDepChips(item.dependency)}
                   ${renderMentionChips(item.mentions, item.id)}
                 </div>
@@ -1787,18 +1675,11 @@
             </div>
           </div>`;
         }).join("");
-      });
+      }
 
       document.getElementById("totalBadge").textContent = active.length + " active";
       const mnavBadge = document.getElementById('mnavBadge');
       if (mnavBadge) mnavBadge.textContent = active.length || '';
-
-      // Re-apply mobile filter after render (quadrants are re-created by innerHTML)
-      if (typeof _mobileFilter !== 'undefined' && _mobileFilter) {
-        document.querySelectorAll('.quadrant').forEach(el => {
-          el.style.display = el.dataset.quadrant === _mobileFilter ? '' : 'none';
-        });
-      }
 
       // ── Due today strip ──
       const todayStr = localDateISO();
@@ -1810,7 +1691,7 @@
       } else {
         dtSection.style.display = "block";
         dtList.innerHTML = dueToday.map(item => {
-          const meta = QUADRANT_META[item.quadrant] || QUADRANT_META.NN;
+          const meta = urgencyMeta(item);
           const depHtml = item.dependency ? `<span style="opacity:.75;font-size:.7rem;">⏳ ${item.dependency}</span>` : '';
           return `<div class="due-today-card" style="background:${meta.accent};cursor:pointer;" onclick="openTaskModal('${item.id}')">
             <div class="due-text">
@@ -1836,7 +1717,7 @@
       }
       rdSection.style.display = "block";
       doneList.innerHTML = done.map(item => {
-        const meta = QUADRANT_META[item.quadrant] || QUADRANT_META.NN;
+        const meta = urgencyMeta(item);
         return `
           <div class="done-card">
             <span class="done-quadrant-badge" style="background:${meta.accent};">${meta.label}</span>
@@ -1847,59 +1728,10 @@
       }).join("");
     }
 
-    // ── Drag & Drop ──────────────────────────────────────────────────────────
-    let _dragSourceQuadrant = null;
-    let _dragging = false;
-
+    // ── Card click ───────────────────────────────────────────────────────────
     function onCardClick(id, e) {
-      if (_dragging) return;
       if (e.target.closest('button, input, textarea, .delete-tag, .delete-confirm, .deadline-area')) return;
       openTaskModal(id);
-    }
-
-    function onDragStart(e, id) {
-      if (!isConnected) { e.preventDefault(); return; }
-      _dragging = true;
-      dragId = id;
-      e.dataTransfer.effectAllowed = "move";
-      _dragSourceQuadrant = e.target.closest('.quadrant');
-      setTimeout(() => e.target.classList.add("dragging"), 0);
-    }
-
-    function onDragEnd(e) {
-      e.target.classList.remove("dragging");
-      document.querySelectorAll(".quadrant").forEach(q => q.classList.remove("drag-over"));
-      _dragSourceQuadrant = null;
-      setTimeout(() => { _dragging = false; }, 0);
-    }
-
-    function onDragOver(e) {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
-      const q = e.currentTarget;
-      if (q === _dragSourceQuadrant) return;
-      document.querySelectorAll(".quadrant").forEach(el => { if (el !== q) el.classList.remove("drag-over"); });
-      q.classList.add("drag-over");
-    }
-
-    function onDragLeave(e) {
-      // only remove when leaving the quadrant itself (not a child element)
-      if (!e.currentTarget.contains(e.relatedTarget)) {
-        e.currentTarget.classList.remove("drag-over");
-      }
-    }
-
-    function onDrop(e, quadrant) {
-      e.preventDefault();
-      e.currentTarget.classList.remove("drag-over");
-      if (!dragId) return;
-      const item = todos.find(t => t.id === dragId);
-      if (item && item.quadrant !== quadrant) {
-        item.quadrant = quadrant;
-        render();
-        persistState();
-      }
-      dragId = null;
     }
 
     // ── Done / Delete / Restore ──────────────────────────────────────────────
@@ -1950,9 +1782,11 @@
       const titleEl = document.getElementById('taskModalTitleInput');
       titleEl.value = item.text;
       setTimeout(() => autoResizeTitle(titleEl), 0);
-      const qMeta = QUADRANT_META[item.quadrant] || QUADRANT_META.NN;
+      const meta = urgencyMeta(item);
+      const urgentToggle = `<button class="task-modal-urgent-toggle ${item.urgent ? 'on' : ''}" onclick="toggleUrgent('${item.id}')">${item.urgent ? '🔥 Urgent · cliquer pour retirer' : '🔥 Marquer urgent'}</button>`;
       document.getElementById('taskModalMeta').innerHTML =
-        `<span class="task-modal-badge" style="background:${qMeta.accent};">${qMeta.label}</span>
+        `<span class="task-modal-badge" style="background:${meta.accent};">${meta.label}</span>
+         ${urgentToggle}
          <span class="task-modal-created">created ${fmtDate(item.createdAt)}</span>`;
       renderModalMentions(item);
       renderModalDeadline(item);
@@ -2218,9 +2052,9 @@
       const matches = todos.filter(t => !t.done && !excluded.has(t.id) && t.text.toLowerCase().includes(q)).slice(0, 6);
       if (!matches.length) { dropdown.classList.add('hidden'); return; }
       dropdown.innerHTML = matches.map(t => {
-        const qm = QUADRANT_META[t.quadrant] || QUADRANT_META.NN;
+        const m = urgencyMeta(t);
         return `<div class="link-dropdown-item" onmousedown="addModalLink('${t.id}')">
-          <span class="link-item-badge" style="background:${qm.accent};">${qm.label}</span>
+          <span class="link-item-badge" style="background:${m.accent};">${m.label}</span>
           ${escHtml(t.text)}
         </div>`;
       }).join('');
@@ -2607,35 +2441,20 @@
       });
     }
 
-    function parseNaturalPrefix(raw) {
-      // 1. Try abbreviation first (case-insensitive)
-      const abbr = raw.match(/^(IU|IN|NU|NN)\s+(.+)/i);
-      if (abbr) return { prefix: abbr[1].toUpperCase(), taskText: abbr[2].trim() };
-
-      // 2. Natural language — detect important/urgent keywords anywhere in the input
-      const lower = raw.toLowerCase();
-      const notImportant = /\bnot\s+important\b|\bunimportant\b/.test(lower);
-      const notUrgent    = /\bnot\s+urgent\b/.test(lower);
-      const important    = !notImportant && /\bimportant\b/.test(lower);
-      const urgent       = !notUrgent    && /\burgent\b/.test(lower);
-
-      if (!important && !notImportant) return null;
-      if (!urgent    && !notUrgent)    return null;
-
-      const prefix = (important ? 'I' : 'N') + (urgent ? 'U' : 'N');
-
-      // Strip the classification words from the task text
+    function parseTaskInput(raw) {
+      // "!" prefix or "urgent" anywhere → urgent flag. Strip those tokens from the kept text.
+      const isUrgent = /(?:^|\s)!|\burgent\b/i.test(raw);
       const stripped = raw
-        .replace(/\bnot\s+important\b/gi, '')
-        .replace(/\bunimportant\b/gi, '')
-        .replace(/\bimportant\b/gi, '')
+        .replace(/^!\s*/, '')
+        .replace(/\s!(?=\s)/g, ' ')
         .replace(/\bnot\s+urgent\b/gi, '')
         .replace(/\burgent\b/gi, '')
-        .replace(/^[\s,;:\u00B7\-]+/, '')
+        .replace(/^[\s,;:·\-]+/, '')
+        .replace(/\s+/g, ' ')
         .trim();
-
-      return stripped ? { prefix, taskText: stripped } : null;
+      return stripped ? { urgent: isUrgent, taskText: stripped } : null;
     }
+
 
     function runCommand() {
       if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
@@ -2663,33 +2482,30 @@
         return;
       }
 
-      // ── add [PREFIX task] ──
-      const parsed = parseNaturalPrefix(raw);
+      // ── add task ──
+      const parsed = parseTaskInput(raw);
       if (!parsed) {
-        setFeedback("Start with IU · IN · NU · NN or say: important urgent / not important not urgent…", "error");
+        setFeedback('Type a task. Add "urgent" or prefix with "!" to flag it as urgent.', "error");
         return;
       }
-      const { prefix, taskText } = parsed;
+      const { urgent, taskText } = parsed;
       const dependency = parseDependency(taskText);
-      // Use explicit date tag if set, otherwise parse from text (legacy support)
+      // Use explicit date tag if set, otherwise parse from text
       let deadline = _pendingDeadline || parseDeadlineFromText(taskText);
-      // IU items default to tomorrow if no deadline is given
-      if (!deadline && prefix === "IU") {
+      // Urgent items default to tomorrow when no deadline is given
+      if (!deadline && urgent) {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         deadline = localDateISO(tomorrow);
       }
       const mentions = parseMentions(taskText);
-      // Only strip deadline from text if it was parsed from text (not from the tag)
       let cleanText = (!_pendingDeadline && deadline) ? stripDeadlineFromText(taskText) : taskText;
       if (mentions.length) cleanText = stripMentionsFromText(cleanText);
 
       const item = {
         id: generateId(),
         text: cleanText,
-        quadrant: prefix,
-        important: prefix === "IU" || prefix === "IN",
-        urgent: prefix === "IU" || prefix === "NU",
+        urgent: urgent,
         dependency: dependency,
         deadline: deadline,
         mentions: mentions,
@@ -2704,8 +2520,7 @@
       input.value = "";
       clearPendingDeadline();
       document.getElementById('mentionPreview').innerHTML = '';
-      const qLabel = QUADRANT_META[prefix].label;
-      setFeedback('Added to "' + qLabel + '": ' + cleanText, "success");
+      setFeedback((urgent ? 'Added (urgent): ' : 'Added: ') + cleanText, "success");
     }
 
 
@@ -2763,7 +2578,7 @@
       _touchCardEl = e.currentTarget;
       _touchLongTimer = setTimeout(() => {
         _touchCardEl = null;
-        showMoveMenu(id);
+        toggleUrgent(id);
       }, 550);
     }
 
@@ -2792,71 +2607,26 @@
       }
     }
 
-    // ── Mobile: move-to menu ─────────────────────────────────────────────────
-    let _moveMenuId = null;
-
-    function showMoveMenu(id) {
-      haptic(45);
-      _moveMenuId = id;
-      document.getElementById('moveMenuOverlay').classList.remove('hidden');
-    }
-
-    function closeMoveMenu() {
-      document.getElementById('moveMenuOverlay').classList.add('hidden');
-      _moveMenuId = null;
-    }
-
-    function moveTaskTo(quadrant) {
-      if (!_moveMenuId || !isConnected) { closeMoveMenu(); if (!isConnected) setFeedback("Connect first.", "error"); return; }
-      const item = todos.find(t => t.id === _moveMenuId);
-      if (item) { item.quadrant = quadrant; render(); persistState(); }
-      closeMoveMenu();
-    }
-
-    // ── Mobile: filter menu ──────────────────────────────────────────────────
-    let _mobileFilter = null; // null = show all, 'IU'/'IN'/'NU'/'NN' = filter
-
-    const FILTER_LABELS = {
-      null: 'Toutes les tâches',
-      IU: '🔥 Do First',
-      IN: '📅 Schedule',
-      NU: '🤝 Delegate',
-      NN: '🗑 Eliminate',
-    };
-
-    function openFilterSheet() {
-      // Update active state on options
-      document.querySelectorAll('.filter-opt').forEach(b =>
-        b.classList.toggle('active', b.dataset.q === (_mobileFilter || ''))
-      );
-      document.getElementById('filterSheetOverlay').classList.remove('hidden');
-    }
-
-    function closeFilterSheet() {
-      document.getElementById('filterSheetOverlay').classList.add('hidden');
-    }
-
-    function applyFilter(q) {
-      _mobileFilter = q;
-      // Show/hide quadrants
-      document.querySelectorAll('.quadrant').forEach(el => {
-        el.style.display = (!q || el.dataset.quadrant === q) ? '' : 'none';
-      });
-      // Update button label
-      const lbl = document.getElementById('mobileFilterLabel');
-      if (lbl) lbl.textContent = FILTER_LABELS[q] || 'Toutes les tâches';
-      closeFilterSheet();
-      window.scrollTo({ top: 0, behavior: 'instant' });
+    // ── Toggle urgent flag from task modal ──────────────────────────────────
+    function toggleUrgent(id) {
+      if (!isConnected) { setFeedback("Connect to todos.json first.", "error"); return; }
+      const item = todos.find(t => t.id === id);
+      if (!item) return;
+      item.urgent = !item.urgent;
+      persistState();
+      render();
+      if (_taskModalId === id) openTaskModal(id);
     }
 
     // ── Mobile capture screen ───────────────────────────────────────────────
-    let _mcQuadrant = 'IU';
+    let _mcUrgent = false;
     let _mcMentions = [];
     let _mcDeadline = null; // { iso, label }
 
-    function mcSetQ(q) {
-      _mcQuadrant = q;
-      document.querySelectorAll('.mcs-q-btn').forEach(b => b.classList.toggle('active', b.dataset.q === q));
+    function mcToggleUrgent() {
+      _mcUrgent = !_mcUrgent;
+      const btn = document.getElementById('mcUrgentBtn');
+      if (btn) btn.classList.toggle('active', _mcUrgent);
     }
 
     function mcSetDate(preset) {
@@ -2926,7 +2696,7 @@
       if (!text) { mcFeedback('Écris d\'abord ta tâche.', 'error'); return; }
 
       let deadline = _mcDeadline ? _mcDeadline.iso : null;
-      if (!deadline && _mcQuadrant === 'IU') {
+      if (!deadline && _mcUrgent) {
         const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
         deadline = localDateISO(tomorrow);
       }
@@ -2934,9 +2704,7 @@
       const item = {
         id: generateId(),
         text: text,
-        quadrant: _mcQuadrant,
-        important: _mcQuadrant === 'IU' || _mcQuadrant === 'IN',
-        urgent:    _mcQuadrant === 'IU' || _mcQuadrant === 'NU',
+        urgent: _mcUrgent,
         deadline:  deadline,
         mentions:  [..._mcMentions],
         createdAt: new Date().toISOString(),
@@ -2952,8 +2720,11 @@
       _mcMentions = [];
       mcRenderMentionChips();
       mcClearDate();
+      _mcUrgent = false;
+      const urgentBtn = document.getElementById('mcUrgentBtn');
+      if (urgentBtn) urgentBtn.classList.remove('active');
 
-      mcFeedback('✓ Ajouté dans ' + QUADRANT_META[_mcQuadrant].label, 'success');
+      mcFeedback(_mcUrgent ? '✓ Ajouté (urgent)' : '✓ Ajouté', 'success');
     }
 
     function mcFeedback(msg, type) {
@@ -2988,11 +2759,11 @@
     });
 
     // ── Init ────────────────────────────────────────────────────────────────
+    if (migrateLegacyShape() && isConnected) persistState();
     migrateDeadlines(); // populate deadline field from text for legacy items
     updateConnectionUI(); // start locked
     tryAutoConnect();    // silently reconnect if handle + permission already available
     render();
-    // initTabObserver removed — replaced by explicit filter menu
     setTimeout(() => location.reload(), 600_000); // auto-refresh every 10 min
 
     // @ mention live preview
